@@ -1,0 +1,6 @@
+/moon.mobileconfig
+  Content-Type: application/x-apple-aspen-config
+  Content-Disposition: attachment; filename="moon.mobileconfig"
+
+/moon-test-signed.mobileconfig
+  Content-Type: application/x-apple-aspen-config

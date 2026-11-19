@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>달의 고리 · 온라인 자동 매칭</title>
+<link rel="stylesheet" href="/moon.css">
+<style>
+.match-content { padding: 55px 10px 24px; text-align: center; }
+.match-content h1 { font-size: 1.65rem; }
+.match-content label { display: grid; gap: 7px; margin: 20px auto; max-width: 230px; }
+.match-content input { font: inherit; padding: 9px; border: 1px solid #8798ca; border-radius: 6px; }
+.match-status { min-height: 3em; color: #e3eaff; }
+.match-content #invite-url { overflow-wrap: anywhere; text-decoration: underline; }
+.match-content #invite-qr { max-width: 100%; image-rendering: pixelated; }
+.match-actions { display: flex; justify-content: center; gap: 9px; margin: 16px 0; }
+.match-scores { display: flex; justify-content: space-between; gap: 12px; margin: 18px 0; }
+.match-scores > span { overflow-wrap: anywhere; }
+.match-content .board { width: min(85%, 260px); gap: var(--connector); --connector: 24px; }
+.match-content .tile { font-size: 1.45rem; }
+.match-content .online-rival { background: #362943; }
+.match-content .hand { max-width: 260px; margin: 30px auto 0; }
+.match-content .card { font-size: 1.3rem; touch-action: none; }
+.match-content .card small { font-size: .62rem; }
+#next-stage { margin-top: 18px; }
+.match-content .drop-target { outline: 2px solid #dce6ff; }
+</style>
+<script src="/qr.js" defer></script>
+<script src="/duel-rules.js" defer></script>
+<script src="/card-art.js" defer></script><script src="/full-moon.js" defer></script><script src="/online-client.js" defer></script>
+</head>
+<body>
+<main>
+<section class="match-content">
+<h1 id="match-title">온라인 자동 매칭</h1>
+<form id="queue">
+<label>플레이어 이름 <input name="name" maxlength="20" placeholder="별명 입력" autocomplete="nickname"></label>
+<button class="primary">매칭 시작</button>
+</form>
+<p class="match-status" id="match-status" role="status">다른 기기에서도 매칭을 시작하면 자동으로 연결돼요.</p>
+<section id="invite-box" hidden><p><a id="invite-url"></a></p><button id="copy-invite" class="primary">링크 복사</button><p><canvas id="invite-qr" hidden aria-label="친구 초대 QR 코드"></canvas></p></section>
+<div id="online-game" hidden>
+<p id="series-progress" hidden></p><div id="duel-table" class="extra-game" hidden></div><div class="match-scores"><span id="score-a"></span><span id="score-b"></span></div>
+<p class="subtle">보름달 가로·세로 4연속 +10점 · 5연속 +20점 · 이후 장당 +10점</p><div class="board" id="online-board" aria-label="온라인 게임판"></div>
+<button id="full-moon" class="primary full-moon">🔒 내 카드 전부 보름달</button>
+<div class="hand" id="online-hand" aria-label="내 카드"></div><button id="next-stage" class="primary" hidden>다음 단계 준비</button>
+</div>
+<button id="retry-match" class="primary" hidden>다시 연결</button><div class="match-actions"><button class="primary" id="cancel-match" hidden>나가기</button><a id="game-home" href="/moonring">게임 홈</a></div>
+</section>
+</main>
+</body>
+</html>

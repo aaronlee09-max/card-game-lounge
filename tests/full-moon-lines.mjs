@@ -1,0 +1,21 @@
+import {readFileSync} from 'node:fs';
+import vm from 'node:vm';
+import assert from 'node:assert/strict';
+const scope={};
+vm.createContext(scope);
+vm.runInContext(readFileSync('dist/app.js','utf8').split('function moon(phase)')[0],scope);
+const score=(board,index,width)=>scope.combinations(board,index,4,width)
+  .filter(match=>match.name.startsWith('보름달 ')&&match.name.endsWith('보너스'));
+const row=phases=>phases.map((phase,index)=>phase===null?null:{phase,index});
+assert.equal(score(row([4,4,null]),2,3).length,0);
+assert.equal(score(row([4,4,4,null]),3,4)[0].score,10);
+assert.equal(score(row([4,4,null,4,4]),2,5)[0].score,20);
+assert.equal(score(row([4,4,4,4,4,null]),5,6)[0].score,30);
+assert.equal(score(row([4,4,1,null,4]),3,5).length,0);
+assert.equal(score(row([null,null,4,4,null,null]),3,3).length,0);
+const vertical=Array(25).fill(null);
+for(const index of [2,7,17,22]) vertical[index]={phase:4,index};
+assert.equal(score(vertical,12,5)[0].score,20);
+for(const index of [10,11,13,14]) vertical[index]={phase:4,index};
+assert.equal(score(vertical,12,5).reduce((sum,match)=>sum+match.score,0),40);
+console.log('4, 5, 6-card lines, middle placement, vertical cross and broken lines passed.');
