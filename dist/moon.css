@@ -355,3 +355,8 @@ main{width:min(100%,530px);min-height:100svh;padding:0 19px 16px;background-imag
 .install-page img { border-radius:22%; }
 .game-install-link { display:block; margin:18px auto 24px; font-size:1rem; }
 .install-page ol { text-align:left; line-height:1.8; padding-left:1.4rem; }
+
+/* Image-only profile downloads */
+a.profile-download,a:has(>img[alt*="구성"]),a:has(>img[src*="profile-download"]),a:has(>img[src*="mobileconfig-download"]){display:inline-flex!important;align-items:center;justify-content:center;max-width:100%;padding:0!important;margin-inline:auto;background:transparent!important;border:0!important;box-shadow:none!important;line-height:0;text-decoration:none!important;vertical-align:middle}
+a.profile-download img,a img[src*="profile-download"],a img[src*="mobileconfig-download"]{display:block!important;width:200px!important;max-width:100%!important;height:auto!important;border-radius:0!important;object-fit:contain!important;aspect-ratio:auto!important}
+.install-page{overflow-wrap:anywhere}.install-page p:has(a.profile-download){text-align:center}

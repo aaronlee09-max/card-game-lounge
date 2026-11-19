@@ -6,3 +6,5 @@ for(const game of ['uno','blackjack']) {
   const html=`<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${name} 오프라인</title><style>${css}</style></head><body><main><section class="extra-game" data-game="${game}"><h1>${name}</h1><p id="game-message" role="status"></p><div id="game-table"></div></section></main><script>${code.replaceAll('</script','<\\/script')}</script></body></html>`;
   writeFileSync('dist/'+game+'/'+game+'-offline.html',html);
 }
+
+for(const game of ['uno','blackjack']){const file='dist/'+game+'/'+game+'-offline.html';writeFileSync(file,readFileSync(file,'utf8').replace('</body>','<script>'+readFileSync('dist/offline-language.js','utf8')+'</script></body>'));}

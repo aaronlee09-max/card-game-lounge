@@ -61,7 +61,7 @@ for(const [path,scope] of [['/sw.js','/'],['/uno/sw.js','/uno/'],['/blackjack/sw
   const cache={addAll:async values=>requests.push(...values)};
   vm.runInNewContext(source,{
     URL,Request: class extends Request { constructor(input,options) { super(new URL(input,'https://webtronics.run.place'+scope),options); } },caches:{open:async()=>cache},
-    self:{location:new URL(path,'https://webtronics.run.place'),registration:{scope:'https://webtronics.run.place'+scope},
+    self:{skipWaiting:()=>{},location:new URL(path,'https://webtronics.run.place'),registration:{scope:'https://webtronics.run.place'+scope},
       addEventListener:(name,callback)=>handlers[name]=callback}
   });
   let job;

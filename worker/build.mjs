@@ -6,7 +6,7 @@ for (const entry of readdirSync('dist', {withFileTypes:true})) {
     assets[entry.name] = readFileSync('dist/' + entry.name).toString('base64');
   }
 }
-for (const game of ['uno','blackjack']) {
+for (const game of ['uno','blackjack','locales']) {
   for (const name of readdirSync('dist/' + game)) {
     assets[game+'/'+name] = readFileSync('dist/'+game+'/'+name).toString('base64');
   }
