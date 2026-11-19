@@ -1,3 +1,5 @@
+let refreshing=false;const hadController=!!navigator.serviceWorker?.controller;
+navigator.serviceWorker?.addEventListener('controllerchange',()=>{if(hadController&&!refreshing){refreshing=true;location.reload();}});
 const installButton = document.querySelector('#install-app');
 const offlineStatus = document.querySelector('#offline-status');
 let installPrompt;
@@ -19,8 +21,9 @@ window.addEventListener('appinstalled', () => {
 });
 
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register(new URL('./sw.js',document.baseURI))
+  navigator.serviceWorker.register(new URL('./sw.js',document.baseURI),{updateViaCache:'none'})
     .then(registration => {
+      registration.update().catch(()=>{});
       if (registration.active) return;
       const worker = registration.installing || registration.waiting;
       if (!worker) throw new Error('Offline worker unavailable');
