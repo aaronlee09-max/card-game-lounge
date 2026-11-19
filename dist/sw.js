@@ -1,5 +1,5 @@
-const cacheName = 'moon-game-v23';
-const core = ['./', './index.html', './lounge-install.html', './lounge.webmanifest', './lounge-192.png', './lounge-512.png', '/uno/', '/blackjack/', '/uno/manifest.webmanifest', '/blackjack/manifest.webmanifest', './moonring', './moon-install.html', './app.js', './full-moon.js', './moon.css', './install.js',
+const cacheName = 'moon-game-v25';
+const core = ['./', './index.html', './mobileconfig-download.png', './lounge-install.html', './lounge.webmanifest', './lounge-192.png', './lounge-512.png', '/uno/', '/blackjack/', '/uno/manifest.webmanifest', '/blackjack/manifest.webmanifest', './moonring', './moon-install.html', './app.js', './full-moon.js', './moon.css', './install.js',
   './manifest.webmanifest', './moon-192.png', './moon-512.png', './moon-offline.html', './extra-games.js', './card-art.js', './online.html', './online-client.js', './duel-rules.js', './qr.js'];
 const startURL = new URL('./', self.location.href).href;
 const coreURLs = new Set(core.map(path => new URL(path, startURL).href));

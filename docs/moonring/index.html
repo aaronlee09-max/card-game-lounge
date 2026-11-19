@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="ko">
+<head><base href="/">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#11172e">
+<title>달의 고리 · 달 카드 게임</title>
+<meta name="description" content="달의 위상을 연결해 반달과 겨루는 한국어 카드 게임">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="apple-touch-icon" href="./moon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script src="./install.js" defer></script>
+<link rel="stylesheet" href="moon.css">
+<script src="/full-moon.js" defer></script><script src="app.js" defer></script>
+<meta name="apple-mobile-web-app-title" content="달의 고리"></head>
+<body>
+<header class="top"><a href="/moonring" class="brand"><span aria-hidden="true">☾</span> 달의 고리</a><button id="help">게임 방법</button></header>
+<main>
+  <section id="opening" class="opening"><div class="opening-art" aria-hidden="true"><span>✧</span><span>◐</span><span>✦</span></div><h2>달의 고리</h2><button id="start" class="play" aria-label="봇 대전">봇 대전</button><nav class="modes" aria-label="게임 모드"><a href="https://royal-room-nov12-e295.mutedwand2.chatgpt.site/online.html">자동 매칭</a><a href="https://royal-room-nov12-e295.mutedwand2.chatgpt.site/online.html?mode=link">링크 초대 매칭</a><a href="https://royal-room-nov12-e295.mutedwand2.chatgpt.site/online.html?mode=qr">QR 초대 매칭</a><button id="practice-mode">연습</button><button id="local-mode">한 기기 2인</button></nav><a class="offline-link" href="/moon-install.html">달의 고리 앱 설치</a></section>
+  <div id="play-screen" hidden>
+  <section class="heading">
+    <div class="moon-face" aria-hidden="true"><i></i><i></i><b></b></div>
+    <p id="level" class="level"></p>
+    <h1>달의 고리</h1>
+    <p>내 달 카드로 페어와 순환을 만들어 반달에게 도전하세요.</p>
+  </section>
+  <section class="game" aria-label="달 카드 게임">
+    <div class="scores">
+      <div class="score player"><span>나</span><strong id="player-score">0</strong></div>
+      <div class="message" role="status" id="status"></div>
+      <div class="score rival"><span>☾ 반달</span><strong id="rival-score">0</strong></div>
+    </div>
+    <div id="rival-hand" class="rival-hand" aria-label="반달의 뒷면 카드 세 장"><span>◐</span><span>◕</span><span>◑</span></div>
+    <div class="arena"><div id="board" class="board" aria-label="게임판"></div></div>
+    <section class="tray" aria-label="내 카드">
+      <div class="tray-label"><strong>내 카드</strong><span id="selection">카드를 선택하세요</span></div>
+      <button id="full-moon" class="primary full-moon">🔒 내 카드 전부 보름달</button>
+<div id="hand" class="hand"></div><button class="primary pass-device" id="pass-device" hidden>기기를 받았어요</button>
+    </section>
+
+  </section>
+  <section class="reference" aria-label="달 위상 순서">
+    <h2>달의 위상 순서</h2><ol id="phases"></ol>
+  </section>
+  <footer><label class="hint-toggle"><input id="hints" type="checkbox"> 점수 힌트</label><button id="restart">스테이지 다시 시작</button><a href="#offline-guide">오프라인 플레이</a></footer>
+  </div>
+  <section id="result" class="journey" hidden aria-labelledby="result-title">
+    <div class="moon-face" aria-hidden="true"><i></i><i></i><b></b></div>
+    <ol class="journey-stars" id="journey-stars" aria-label="연승 진행"><li>✷</li><li>☆</li><li>✧</li></ol>
+    <strong id="result-title"></strong><p id="result-detail"></p><button id="continue" class="primary"></button>
+  </section>
+  <section class="offline-guide" id="offline-guide" aria-labelledby="offline-title">
+    <h2 id="offline-title">달의 고리 설치 · 오프라인</h2><p><a href="/moon-install.html">달의 고리 전용 설치 안내</a></p>
+    <button id="install-app" class="primary" hidden>앱 설치</button>
+    <h3>Android에서 오프라인으로 플레이</h3>
+    <ol>
+      <li>인터넷에 연결된 상태에서 이 페이지를 <strong>Chrome</strong>으로 여세요.</li>
+      <li><strong>앱 설치</strong> 버튼을 누르거나 Chrome의 <strong>⋮ → 홈 화면에 추가 → 설치</strong>를 선택하세요. Chrome 버전에 따라 메뉴 이름이 다를 수 있어요.</li>
+      <li>홈 화면의 <strong>달의 고리</strong> 아이콘으로 앱을 한 번 열고, 이 안내에서 <strong>오프라인 준비 완료</strong>를 확인하세요. 비행기 모드에서 아이콘으로 다시 열어 보면 확인할 수 있어요.</li>
+    </ol>
+    <p><a href="/">Android에서 달의 고리 바로 열기</a></p>
+    <p><strong>iPhone·iPad Safari</strong>에서 공유 → 홈 화면에 추가를 선택하고, 표시되면 <strong>웹 앱으로 열기</strong>를 켜세요.</p>
+    <p>설치한 앱을 인터넷이 연결된 상태에서 한 번 열고 <strong>오프라인 준비 완료</strong>가 표시되면 오프라인에서 시작할 수 있어요.</p>
+    <p id="offline-status" role="status"></p>
+    <p>iPhone·iPad용 <a href="./moon.mobileconfig" download>홈 화면 바로가기 구성 프로파일 다운로드</a>. 서명되지 않은 바로가기 프로파일이에요. 내려받은 뒤 설정에서 설치하면 바로가기가 추가돼요.</p>
+    <p><a href="./moon-test-signed.mobileconfig">테스트 서명 프로파일 열기</a>. 자체 서명이라 기기에서 검증되지 않음으로 표시될 수 있어요.</p>
+    <p><a href="./moon-signed.mobileconfig">이승현 서명 프로파일 열기</a>. 자체 서명이라 기기에서 검증되지 않음으로 표시될 수 있어요.</p>
+    <h3>iPad에서 HTML 파일로 플레이</h3>
+    <ol>
+      <li><a href="./moon-offline.html" download>게임 HTML 다운로드</a> 후 파일 앱의 <strong>나의 iPad</strong>에 저장하세요.</li>
+      <li><a href="https://www.icloud.com/shortcuts/02be14f88a87497b957224e08ffc4d81" target="_blank" rel="noopener">Open HTML file 단축어 열기</a>에서 <strong>단축어 추가</strong>를 누르세요.</li>
+      <li>파일 앱에서 <strong>moon-offline.html</strong>을 길게 누르고 <strong>공유 → Open HTML file</strong>을 선택하세요.</li>
+    </ol>
+    <p><a href="./open-html-file.shortcut" download>Open HTML file 단축어 파일 다운로드</a></p>
+    <p>공유 메뉴에 없으면 단축어 앱에서 <strong>Open HTML file</strong>을 실행하고 게임 파일을 고르세요.</p>
+    <a href="#" class="offline-close">게임 화면으로 돌아가기 ↑</a>
+  </section>
+</main>
+<dialog id="rules">
+  <form method="dialog"><button class="close" aria-label="닫기">×</button><h2>게임 방법</h2>
+  <p>내 카드 한 장을 게임판의 빈 칸으로 끌어 놓으세요. 카드와 빈 칸을 차례로 눌러도 돼요. 카드 선택 중 빈 칸에 표시되는 숫자는 이번 수로 얻는 점수예요. 나와 반달이 한 장씩 번갈아 놓아요. 카드는 가로나 세로로 이어집니다.</p>
+  <dl><dt>같은 위상 페어 · 1점</dt><dd>같은 모습의 달 두 장을 이어요.</dd><dt>보름달 페어 · 2점</dt><dd>밝은 부분과 어두운 부분이 서로 반대인 두 달을 이어요.</dd><dt>보름달 연속 보너스</dt><dd>가로 또는 세로로 보름달 4장 +10점, 5장 +20점. 이후 한 장마다 +10점이 추가돼요. 새 카드가 포함된 연속 줄을 계산하며 기존 조합 점수에 더해져요.</dd><dt>달의 순환 · 카드당 1점</dt><dd>아래 위상 순서대로 3장 이상 이어요. 삭과 그믐달도 이어집니다.</dd></dl>
+  <p>조합에 포함된 카드는 내 영역으로 바뀌어요. 판이 차면 내 영역 카드 한 장당 1점을 더하고, 총점이 높은 쪽이 이겨요.</p>
+  <button type="button" id="lesson-replay">조합 연습하기</button> <button class="primary" autofocus>닫기</button></form>
+</dialog>
+<dialog id="tutorial" aria-labelledby="lesson-title">
+  <h2 id="lesson-title"></h2>
+  <p id="lesson-prompt"></p>
+  <div id="lesson-board" class="lesson-board" aria-label="연습 카드판"></div>
+  <button id="lesson-card" class="card lesson-card" aria-pressed="false"></button>
+  <p id="lesson-status" role="status"></p>
+  <div class="lesson-actions"><button id="lesson-skip">건너뛰기</button><button id="lesson-next" class="primary" disabled>다음</button></div>
+</dialog>
+</body>
+</html>

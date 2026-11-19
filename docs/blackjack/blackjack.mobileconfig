@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>PayloadContent</key>
+	<array>
+		<dict>
+			<key>FullScreen</key>
+			<true/>
+			<key>Icon</key>
+			<data>
+			iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAIAAADdvvtQAAADoElE
+			QVR4nO3d3VEbQRCF0cVFBDgfJ8CzyzFSxEYOfpDLlgGB0N2fnulz
+			ImjtfLOjh9Xq7uHxxwK3+nb0AIxNQEQERERARAREREBEBEREQEQE
+			RERARAREREBEBEREQEQERERARAREREBEBEREQEQERERARAREREBE
+			BEREQETujx7gy16en44eYVvff/46eoQvuBvot/HTp3NulIzGCKhV
+			OufqZzTAd6C29SwjfPYBAqKy6gHV34JbK34FqgdEcaUDKr75dlP5
+			OpQOiPoERERARAREREBEBEREQEQERERARAREREBEBEREQEQERERA
+			RAREREBEBEREQEQERERARAREREBEBEREQJ+o/36MYwnoI6d6NPQB
+			AV103o2GLhEQEQG97+0tx03oXQJ6x6VWNPSWgF77uBINvSKg/1zT
+			h4bOCegfZdxAQLeQ2l8C+uOrTWjoREDLcmsNGloEtGQdaKh7QAoI
+			tQ5olXqaJ9g6oLV0bqhvQOuuetuGmga0xXr3bKhjQD1XeiPtAtq0
+			noZp9gpohwXu1lCvgPbRqqFGAe25rn0a6hJQnxXdWYuADqmnSbLz
+			B3TgQnZoaPKADl/CwwfY2uQBVTB3QzMHNPfKFTFtQKXqKTXMuuYM
+			qOCCFRxpFRMGVHapyg6WmC2g4otUfLwbzBYQO5sqoCH29xBDXm+e
+			gAZamIFG/dQ8AXGIeQJ6eX46eoRrDTTqp+YJiENMFdAQO3uIIa83
+			VUDsT0BEZguo+AFRfLwbzBYQO5swoLK7vOxgiQkDYk9zBlRwrxcc
+			aRVzBsRuBERk2oBKHRmlhlnXtAGxj5kDKrLvi4yxkZkDYgf3Rw+w
+			ret3/1efEpz7vnI9d6BluekZ05keS00IiIiAiAjo9sPIKbYIiJCA
+			iHQPKDyGnGLdAyIkICICItI6IP9YmGsdEDkBEekb0IpHT+dTrG9A
+			rEJARJoGtPqh0/YUaxoQa5n8kdZLPJC6FncgIgIiIiAiAiIiICIC
+			IiIgIgIiIiAiAiIiICICIiIgIgIiIiAiAiIiICICIiIgIgIiIiAi
+			AiIiICICIiIgIgIiIiAipQNq+8qLVypfh9IBUV/1gCpvvn0UvwLV
+			A6K4AQIqvgU3Vf+z3z08/jh6hmu1eitU/XRORgroZPqMRknnZLyA
+			KGWA70BUJiAiAiIiICICIiIgIgIiIiAiAiIiICICIiIgIgIiIiAi
+			AiIiICICIiIgIgIiIiAiAiIiICICIiIgIgIi8htaeoFt01+jwgAA
+			AABJRU5ErkJggg==
+			</data>
+			<key>IsRemovable</key>
+			<false/>
+			<key>Label</key>
+			<string>블랙잭</string>
+			<key>PayloadDisplayName</key>
+			<string>블랙잭</string>
+			<key>PayloadIdentifier</key>
+			<string>place.run.webtronics.blackjack.webclip</string>
+			<key>PayloadType</key>
+			<string>com.apple.webClip.managed</string>
+			<key>PayloadUUID</key>
+			<string>BBF34BCA-FBA9-5B83-8F1A-2805CBF28924</string>
+			<key>PayloadVersion</key>
+			<integer>1</integer>
+			<key>Precomposed</key>
+			<true/>
+			<key>URL</key>
+			<string>https://webtronics.run.place/blackjack/</string>
+		</dict>
+	</array>
+	<key>PayloadDescription</key>
+	<string>블랙잭 앱 아이콘을 홈 화면에 추가합니다.</string>
+	<key>PayloadDisplayName</key>
+	<string>블랙잭</string>
+	<key>PayloadIdentifier</key>
+	<string>place.run.webtronics.blackjack.profile</string>
+	<key>PayloadRemovalDisallowed</key>
+	<false/>
+	<key>PayloadType</key>
+	<string>Configuration</string>
+	<key>PayloadUUID</key>
+	<string>9E758EF6-CF1E-59BB-A274-77BB9FF8C128</string>
+	<key>PayloadVersion</key>
+	<integer>1</integer>
+</dict>
+</plist>

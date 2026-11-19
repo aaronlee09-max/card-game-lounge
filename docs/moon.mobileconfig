@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>PayloadContent</key>
+	<array>
+		<dict>
+			<key>FullScreen</key>
+			<true/>
+			<key>Icon</key>
+			<data>
+			iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAIAAADdvvtQAAAE3ElE
+			QVR4nO3dMY4VRxSF4TuWN8AOSBxBQsQKSB1jiXU4QIgADawEybkl
+			R16BIyfOvAi24OBKrYbnmWH6VPW759b/iQCNgNdS/e9Wdc/ocfP0
+			2esAjvrh2hcAbwQECQFBQkCQEBAkBAQJAUFCQJAQECQEBAkBQUJA
+			kBAQJAQECQFBQkCQ/HjOy7y//XTOC2Hvw7u3s1/iZupPJNJNEfNK
+			mhXQN+mc8FbApRNWYXxA+4ummyLmLcrggLYLJZ2CZqzOsIBIx0Wu
+			1KhlGhMQ9XgZuF4DngNRj51tpfTb5GEPEqnHy6j1UgMau6HiTLlq
+			4hCSAqIed3pDfC8MkuMBMX56EIcQEwiSgwExfjpRhhATCBICguRI
+			QOxf/RzexZhAkBAQJAQECQFBQkCQEBAkBAQJAUFCQJAQECQEBAkB
+			QUJAkBAQJAQECQFBctInlFn4+6/fLr/468c/Lr/45++f51+Oh9UD
+			+t9oHvTq5zfb7xePacWAjkVzl8VjWiugselcypiWymiVgGans7dU
+			Rv0DOjOdvUUy6hzQtdLZa59Rz4AqpLPXOKOGDxKr1bPZ36+10S2g
+			svWkfg312cKKp7Nptp01mUAu9WzajKIOAdnVk3o0ZB+QaT2pQUPe
+			AVnXk9wbMg6oQT3JuiHXgNrUk3wbcg0IRVgG1Gz8JNMh5BdQy3qS
+			Y0NmAT2qnn/+/bL9mndJY9k11OdbGXuXxeRXnv/05BqX05nTBPrO
+			8XPPvLEYRV5DyCkgFGQTkD5+vvMPVGA0hGwCQk0eATW+db+LyxDy
+			CAhlGQT0qPHz4I260Z28xRAyCAiVVQ/owOnnnhljNH5S/SHU80l0
+			hrK/Y7dLx0XPgBLRnKD6FobiSge04OOfS8WPQaUDQn0EBAkBQVI3
+			IA5Am8rHoLoBwQIBQUJAkBAQJAQECQFBQkCQEBAkBAQJAUFCQJAQ
+			ECQEBEndgF68/OXal1BF5Y+1rxsQLBAQJAQESemAOAZF7QNQFA8I
+			9REQJAQESfWAFj8GFT8ARf2AUJxBQMsOofrjJywCQmUeAS04hCzG
+			T7gEhLJsAlpqCLmMnzAKCDU5BbTIEDIaP+EVEAoyC6j9EPIaP2EX
+			ULRuyK6ecAwomjbkWE+YBoQ6XANqNoRMx0/4BhSNGvKtJ6wDihYN
+			WdcT7gGFeUPu9USDgMK2oQb1RI+AwrChHvVEp/8vLBuq//n2bdJJ
+			TSbQpvgoalZP9AsoCjfUr57otIXtVdvOWqaTegaUKmTUOJ3UOaB0
+			rYzap5P6B5TOzGiRdNIqAaXZGS2VTloroLS/TdNjWjCavRUD2jsW
+			0+LR7K0e0F7ZB0iVNXyQiDMRECQEBAkBQUJAkBAQJAQECQFBQkCQ
+			EBAkBAQJAUFCQJAQECQEBAkBQUJAiIh4f/vp2F88EtCHd2+Vl0RZ
+			ubKPwgSChIAgORgQu1gnuY4H9q9gAkF0PCCGUA/K+Akm0OL0978U
+			EEOoh8PjJ/QJREO+xM0rDdjCaMjRkHpi7BmIhlyMqicibp4+e63/
+			K7GrZ8hlYZLhyzQsoERGlc1YncEBxdcbGRkVMW9RxgeUvjkPUdL5
+			Lo+kM1ZhVkCJY3UR897AcwPaUNJVnDD4TwoIXfG9MEgICBICgoSA
+			ICEgSAgIEgKChIAgISBICAgSAoKEgCAhIEgICBICguQ/5q+BK3R+
+			qScAAAAASUVORK5CYII=
+			</data>
+			<key>IsRemovable</key>
+			<false/>
+			<key>Label</key>
+			<string>달의 고리</string>
+			<key>PayloadDisplayName</key>
+			<string>달의 고리</string>
+			<key>PayloadIdentifier</key>
+			<string>site.moon.webclip</string>
+			<key>PayloadType</key>
+			<string>com.apple.webClip.managed</string>
+			<key>PayloadUUID</key>
+			<string>811E2EE0-890F-5C6E-A6E9-5C3E6A247AFF</string>
+			<key>PayloadVersion</key>
+			<integer>1</integer>
+			<key>URL</key>
+			<string>https://webtronics.run.place/moonring</string>
+		</dict>
+	</array>
+	<key>PayloadDescription</key>
+	<string>달의 고리 앱 아이콘을 홈 화면에 추가합니다.</string>
+	<key>PayloadDisplayName</key>
+	<string>달의 고리</string>
+	<key>PayloadIdentifier</key>
+	<string>site.moon.profile</string>
+	<key>PayloadRemovalDisallowed</key>
+	<false/>
+	<key>PayloadType</key>
+	<string>Configuration</string>
+	<key>PayloadUUID</key>
+	<string>6BEF612C-DE88-5EBA-B8BB-AECB6DE4A2D2</string>
+	<key>PayloadVersion</key>
+	<integer>1</integer>
+</dict>
+</plist>
