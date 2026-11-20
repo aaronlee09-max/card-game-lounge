@@ -1,0 +1,1 @@
+{"name":"board-game-lounge","private":true,"type":"module","scripts":{"dev":"node --watch scripts/dev.mjs","build":"node scripts/build.mjs","test":"node scripts/test.mjs"}}

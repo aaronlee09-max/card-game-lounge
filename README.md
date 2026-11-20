@@ -1,47 +1,33 @@
 # 카드 게임 라운지
 
-달의 고리 · 우노 · 블랙잭을 모은 웹 게임입니다.
-
 서비스: https://webtronics.run.place/
 
-## 화면
+기존 달의 고리, 우노, 블랙잭에 루미큐브, 젠가, 할리갈리, 체스, 오목, 도미노, 카드 짝 맞추기를 추가한 10종 라운지입니다. 달의 고리 플레이 화면과 기존 메인 페이지 구성을 유지합니다.
 
-- `/`: 게임 선택 라운지
-- `/moonring`: 달의 고리
-- `/uno/`: 우노
-- `/blackjack/`: 블랙잭
-- `/lounge-install.html`: 라운지 앱 설치 및 통합 다운로드
-
-게임별 앱 아이콘, PWA 설치 안내, 오프라인 HTML, iOS Web Clip 구성 프로파일을 포함합니다. 온라인 대전은 Cloudflare Worker와 D1 데이터베이스가 필요합니다. HTML 파일만 실행하면 온라인 매칭은 동작하지 않습니다.
+- 모든 게임은 독립 실행 화면, 설치 안내, 아이콘, 단일 오프라인 HTML을 제공합니다.
+- 신규 7종의 메뉴·규칙·경고·설치 안내를 기존 언어 선택기의 45개 언어로 제공합니다.
+- 루미큐브·할리갈리·도미노는 로컬 2~4인, 젠가는 혼자·로컬 2~4인, 체스·오목은 로컬 2인을 지원합니다. 카드 짝 맞추기는 혼자 플레이합니다.
+- 신규 게임 중 루미큐브·젠가·할리갈리는 검증한 기존 Worker/D1 경로에서 온라인 2인 초대·매칭을 지원합니다. 체스·오목·도미노의 온라인 모드는 제공하지 않습니다.
+- 젠가는 지지 범위와 무게중심을 사용하는 디지털 균형 모형입니다. 루미큐브는 조커 자유 재배열을 허용합니다. 오목 금수 모드는 대회 개국 절차를 적용하지 않습니다.
 
 ## 빌드와 검사
 
-Node.js에서 별도 패키지 설치 없이 빌드합니다.
+Node.js와 Python/Pillow가 필요합니다. 런타임 npm 의존성은 없습니다.
 
 ```sh
-node worker/build.mjs
-node tests/review-regressions.mjs
-node tests/full-moon.mjs
-node tests/full-moon-lines.mjs
+node scripts/build.mjs
+node scripts/test.mjs
 ```
 
-생성되는 Worker 진입점은 `dist/server/index.js`입니다. `dist`의 HTML·CSS·JavaScript·이미지는 Worker에 포함됩니다. `worker/build-offline.mjs`는 우노와 블랙잭의 단독 실행 HTML을 생성합니다.
+`dist`는 게임·언어 소스와 생성된 파일을 포함하며, `docs`는 GitHub Pages용 내보내기입니다. `dist/server/index.js`는 기존 Sites Worker용 생성 파일입니다. 수정 후 빌드하여 두 출력이 같은 소스를 사용하도록 유지하세요. `npm run dev`는 로컬 검수에만 임시 SQLite 데이터를 사용합니다. 운영 DB에는 영향을 주지 않습니다.
 
 ## 배포
 
-현재 서비스는 Sites에서 운영되며 `.openai/hosting.json`은 기존 Sites 프로젝트를 가리킵니다. 이 GitHub 저장소는 현재 소스 사본이며 자동 배포 연결은 설정하지 않았습니다.
+- 실제 도메인은 GitHub Pages의 `main` 브랜치 `/docs` 폴더를 사용합니다.
+- 온라인 서버와 첨부 다운로드는 기존 Sites 프로젝트를 사용합니다. `.openai/hosting.json`의 프로젝트 ID와 `DB` 바인딩을 유지해야 합니다.
+- GitHub Pages 배포와 Sites 배포를 각각 수행해야 합니다. 한쪽에 저장하는 것만으로 다른 쪽이 자동 배포되지는 않습니다.
+- 공유 오프라인 리소스는 Worker에 한 번만 포함하며, 다운로드 요청 때 단일 HTML을 정확하게 재구성합니다.
 
-독립적으로 배포하려면 Cloudflare Worker의 진입점을 `dist/server/index.js`로 설정하고 D1을 `DB` 이름으로 연결한 다음 `drizzle/0000_match_queue.sql`을 데이터베이스에 적용하세요. 다른 도메인으로 옮길 때는 소스의 `webtronics.run.place` 초대·프로파일 URL도 변경해야 합니다.
+## 검수 범위
 
-## 구성 프로파일
-
-`dist/all-games.mobileconfig`는 라운지와 세 게임의 아이콘 4개를 추가합니다. 각 게임용 프로파일도 포함합니다. 최신 XML 프로파일의 Web Clip은 개별 삭제를 막고 프로파일 삭제로 제거하도록 설정되어 있습니다. 과거 `*-signed.mobileconfig`는 이전 서명본으로 최신 XML 설정과 다를 수 있습니다. 인증서 개인키는 포함하지 않습니다.
-
-## 주요 소스
-
-- `dist/app.js`: 달의 고리
-- `dist/extra-games.js`, `dist/duel-rules.js`: 우노·블랙잭
-- `dist/online-client.js`, `worker/online.js`: 대전 클라이언트·서버
-- `dist/sw.js`, `dist/card-app-sw.js`: 오프라인 캐시
-- `drizzle/`: 온라인 매칭 데이터베이스 스키마
-- `tests/`: 게임 회귀 검사
+게임 판정, 기존 온라인 회귀, Worker 다운로드, 오프라인 캐시 및 번역 키 검사는 자동 검사합니다. 브라우저에서 신규 게임 동작과 주요 언어를 검수했습니다. 실제 iPhone·iPad 기기에서의 설치와 터치 검수, 45개 언어 전체의 원어민 검수는 별도로 필요합니다.

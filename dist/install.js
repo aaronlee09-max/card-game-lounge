@@ -1,5 +1,5 @@
-let refreshing=false;const hadController=!!navigator.serviceWorker?.controller;
-navigator.serviceWorker?.addEventListener('controllerchange',()=>{if(hadController&&!refreshing){refreshing=true;location.reload();}});
+// Cache updates must not interrupt an active game. The next navigation loads fresh assets.
+navigator.serviceWorker?.addEventListener('controllerchange',()=>document.dispatchEvent(new Event('offline-ready')));
 const installButton = document.querySelector('#install-app');
 const offlineStatus = document.querySelector('#offline-status');
 let installPrompt;
@@ -7,17 +7,17 @@ let installPrompt;
 window.addEventListener('beforeinstallprompt', event => {
   event.preventDefault();
   installPrompt = event;
-  installButton.hidden = false;
+  if(installButton) installButton.hidden = false;
 });
-installButton.addEventListener('click', async () => {
+installButton?.addEventListener('click', async () => {
   const prompt = installPrompt;
   installPrompt = null;
-  installButton.hidden = true;
+  if(installButton) installButton.hidden = true;
   if (prompt) await prompt.prompt();
 });
 window.addEventListener('appinstalled', () => {
   installPrompt = null;
-  installButton.hidden = true;
+  if(installButton) installButton.hidden = true;
 });
 
 if ('serviceWorker' in navigator) {

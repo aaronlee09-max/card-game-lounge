@@ -1,0 +1,12 @@
+import {readdirSync,readFileSync,writeFileSync}from'node:fs';
+const games=['uno','blackjack',...JSON.parse(readFileSync('dist/games.json')).map(g=>g.id)];
+const files=['/','/index.html','/moonring','/moonring/','/moonring.html','/moon-install.html','/lounge-install.html','/lounge.webmanifest','/lounge-192.png','/lounge-512.png','/manifest.webmanifest','/moon-192.png','/moon-512.png','/moon.css','/board.css','/board-rules.js','/lounge-rules.js','/board-client.js','/vendor/chess.js','/app.js','/full-moon.js','/extra-games.js','/duel-rules.js','/card-art.js','/online-client.js','/online.html','/qr.js','/install.js','/site-language.js','/mobileconfig-download.png'];
+for(const game of games)files.push('/'+game+'/','/'+game+'/index.html','/'+game+'/install.html','/'+game+'/manifest.webmanifest','/'+game+'/icon-192.png','/'+game+'/icon-512.png');
+for(const f of readdirSync('dist/locales'))files.push('/locales/'+f);
+for(const [code]of JSON.parse(readFileSync('dist/profile-languages.json')))files.push('/profile-download-'+code+'.svg');
+const sw=`const CACHE='lounge-20261120-10-v1',FILES=${JSON.stringify(files)};
+self.addEventListener('install',e=>{self.skipWaiting();e.waitUntil(caches.open(CACHE).then(c=>c.addAll(FILES.map(p=>new Request(new URL(p,self.location.origin),{cache:'reload'}))))) });
+self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE&&/^(moon-game-|card-app-|board-|lounge-)/.test(k)).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
+self.addEventListener('fetch',e=>{const u=new URL(e.request.url);if(e.request.method!=='GET'||u.origin!==self.location.origin||!FILES.includes(u.pathname))return;e.respondWith(fetch(e.request).catch(()=>caches.open(CACHE).then(c=>c.match(u.origin+u.pathname,{ignoreSearch:true})).then(r=>r||Response.error()))) });`;
+for(const p of ['sw.js','card-app-sw.js',...games.map(g=>g+'/sw.js')])writeFileSync('dist/'+p,sw);
+console.log(files.length+' cache assets, all ten games and 45 languages.');

@@ -136,29 +136,34 @@ async function online(request, env, path) {
 }
 
 const contentTypes = {html:'text/html; charset=utf-8',js:'text/javascript; charset=utf-8',css:'text/css; charset=utf-8',
-  png:'image/png',webmanifest:'application/manifest+json',mobileconfig:'application/x-apple-aspen-config',shortcut:'application/octet-stream'};
+  png:'image/png',svg:'image/svg+xml',json:'application/json',txt:'text/plain; charset=utf-8',webmanifest:'application/manifest+json',mobileconfig:'application/x-apple-aspen-config',shortcut:'application/octet-stream'};
 
 export default {
   async fetch(request,env) {
     const {pathname} = new URL(request.url);
+    if (pathname.startsWith('/api/board/')) { try{return await boardOnline(request,env,pathname.slice('/api/board/'.length));}catch{return boardJSON({error:'대전 서버 오류예요. 다시 연결하세요.'},503);} }
     if (pathname.startsWith('/api/match/')) {
       try { return await online(request,env,pathname.slice('/api/match/'.length)); }
       catch { return json({error:'매칭 서버에 연결하지 못했어요. 잠시 후 다시 시도해 주세요.'},503); }
     }
     if (!['GET','HEAD'].includes(request.method)) return new Response(null,{status:405});
-    const gameRoute = pathname.match(/^\/(uno|blackjack)(?:\.html)?$/);
+    const gameRoute = pathname.match(/^\/(uno|blackjack|rummikub|jenga|halli-galli|chess|gomoku|domino|memory)(?:\.html)?$/);
     if (gameRoute) {
       const target = new URL(request.url);
       target.pathname = '/' + gameRoute[1] + '/';
       return Response.redirect(target.href,302);
     }
-    const name = pathname === '/moonring' ? 'moonring.html'
-      : /^\/(uno|blackjack)\/online\.html$/.test(pathname) ? 'online.html'
+    const download = pathname.startsWith('/download/');
+    const assetPath = download ? pathname.slice('/download'.length) : pathname;
+    const name = /^\/moonring\/?$/.test(assetPath) ? 'moonring.html'
+      : /^\/(uno|blackjack|rummikub|jenga|halli-galli|chess|gomoku|domino|memory)\/online\.html$/.test(pathname) ? 'online.html'
       : /^\/(uno|blackjack)\/sw\.js$/.test(pathname) ? 'card-app-sw.js'
-      : pathname.endsWith('/') ? pathname.slice(1)+'index.html' : pathname.slice(1);
-    if (!Object.hasOwn(assets,name)) return new Response('Not found',{status:404});
+      : assetPath.endsWith('/') ? assetPath.slice(1)+'index.html' : assetPath.slice(1);
+    const standalone=Object.hasOwn(offlineTemplates,name);
+    if (!Object.hasOwn(assets,name)&&!standalone) return new Response('Not found',{status:404});
     const type = contentTypes[name.split('.').at(-1)] || 'application/octet-stream';
-    return new Response(request.method === 'HEAD' ? null : Uint8Array.from(atob(assets[name]),c=>c.charCodeAt(0)),
-      {headers:{'content-type':type,'cache-control':'no-cache','x-content-type-options':'nosniff'}});
+    const body=standalone?decodeAsset(offlineTemplates[name]).replace(/<!--LOUNGE:([^>]+)-->/g,(_,key)=>decodeAsset(offlineChunks[key])):Uint8Array.from(atob(assets[name]),c=>c.charCodeAt(0));
+    return new Response(request.method === 'HEAD' ? null : body,
+      {headers:{'content-type':type,'cache-control':'no-cache','x-content-type-options':'nosniff',...(download?{'content-disposition':'attachment; filename="'+name.split('/').at(-1)+'"'}:{})}});
   }
 };
