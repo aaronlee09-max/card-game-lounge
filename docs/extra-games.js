@@ -1,5 +1,6 @@
 const table = document.querySelector('#game-table');
 const gameStatus = document.querySelector('#game-message');
+const gameText=(key,vars={})=>window.LoungeI18n?.t(key,vars)??key.replace(/\{(\w+)\}/g,(_,k)=>vars[k]??'{'+k+'}');
 
 function element(tag, label, className) {
   const node = document.createElement(tag);
@@ -105,7 +106,7 @@ function uno() {
     return node;
   }
   function render() {
-    gameStatus.textContent=message;
+    gameStatus.textContent=gameText(message);
     const top=element('div',null,'card-row');
     top.append(cardNode(discard.at(-1)));
     const hand=element('div',null,'card-row');
@@ -131,10 +132,11 @@ function uno() {
       if(turn!==-1||complete) totals=[0,0];
       reset();
     }));
-    table.replaceChildren(element('p','봇 카드 '+hands[1].length+'장 · '+(turn===0?'내 차례':turn===1?'봇 차례':'게임 종료'),'subtle'),
-      element('p','500점 대전 · 나 '+totals[0]+' : '+totals[1]+' 봇','subtle'),top,element('p','현재 색 · '+colorNames[activeColor],'subtle'),hand,controls,
+    table.replaceChildren(element('p','AI · '+gameText('남은 카드')+' '+hands[1].length+' · '+gameText(turn===0?'내 차례':turn===1?'봇 차례':'게임 종료'),'subtle'),
+      element('p',gameText('점수')+' · '+gameText('플레이어 {n}',{n:1})+' '+totals[0]+' : '+totals[1]+' AI · 500','subtle'),top,element('p','현재 색 · '+colorNames[activeColor],'subtle'),hand,controls,
       element('p','2인 규칙으로 건너뛰기·역방향은 한 번 더 낼 수 있어요. +2·+4 누적과 도전 규칙은 없어요.','subtle'));
   }
+  document.addEventListener('lounge-language',render);
   reset();
 }
 
@@ -204,7 +206,7 @@ function blackjack() {
     return line;
   }
   function render() {
-    gameStatus.textContent=message;
+    gameStatus.textContent=gameText(message);
     const controls=element('div',null,'game-controls');
     if(active) {
       const hand=hands[current];
@@ -225,6 +227,7 @@ function blackjack() {
       ...hands.flatMap(({cards},i)=>[element('p',(hands.length>1?'손 '+(i+1):'내 카드')+' · '+value(cards)+(active&&hands.length>1&&current===i?' (진행 중)':''),'subtle'),row(cards,false)]),controls,
       element('p','딜러는 17 이상에서 멈춰요. 블랙잭은 3:2로 지급해요.','subtle'));
   }
+  document.addEventListener('lounge-language',render);
   render();
 }
 if (table.closest('[data-game]').dataset.game === 'uno') uno(); else blackjack();

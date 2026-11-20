@@ -2,7 +2,7 @@
 from pathlib import Path
 from PIL import Image,ImageDraw,ImageFont
 import json,plistlib,uuid,html
-r=Path('dist');domain='https://webtronics.run.place';backend='https://royal-room-nov12-e295.mutedwand2.chatgpt.site';version='20261120-10-1'
+r=Path('dist');domain='https://webtronics.run.place';backend='https://royal-room-nov12-e295.mutedwand2.chatgpt.site';version='20261120-10-2'
 source=json.loads((r/'lounge-source.json').read_text());helpkeys=[next(k for k in source if k.startswith(prefix)) for prefix in ['타일 14개','최고 완성층','차례대로 카드를','말을 선택한','가로·세로','같은 숫자를','카드 두 장']]
 games=[('rummikub','루미큐브','#237c87'),('jenga','젠가','#a16a3e'),('halli-galli','할리갈리','#a84670'),('chess','체스','#5b65a2'),('gomoku','오목','#51826c'),('domino','도미노','#b87b3d'),('memory','카드 짝 맞추기','#467baa')]
 (r/'games.json').write_text(json.dumps([{'id':g,'name':n,'color':c,'help':helpkeys[i]} for i,(g,n,c) in enumerate(games)],ensure_ascii=False,indent=2))

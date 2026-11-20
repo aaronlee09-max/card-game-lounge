@@ -47,6 +47,7 @@ function render(result) {
   if (waiting && result.room) {
     const url = new URL(state.game ? '/' + state.game + '/online.html' : '/online.html','https://webtronics.run.place');
     url.searchParams.set('room',result.room);
+    url.searchParams.set('lang',window.LoungeI18n?.language||'ko');
     if (state.game) url.searchParams.set('game',state.game);
     const anchor = $('invite-url');
     if (anchor.href !== url.href) {

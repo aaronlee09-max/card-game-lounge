@@ -9,7 +9,14 @@ const templateKeys=Object.keys(window.LOUNGE_GAME_HELP||{});
 let state,chess,mode='solo',seat=0,hand=[],draft=[],selected=new Set(),hiddenHand=false,botTimer,closeTimer,clockTimer,selectedSquare=null,dominoSelected=null,online=null,pollTimer,busy=false,generation=0;
 const faces=['☀','☾','★','♜','♞','♦','♣','♥','♠','✿','⚓','♫','⚑','☂','⚡'];
 const colour=['#b92743','#1767aa','#b66b00','#17212d','#783ca0'];
-const fruitSVG=(fruit)=>{const colours=['#f9c84b','#ed5369','#88b948','#a37bdf'];return `<svg viewBox="0 0 60 60" aria-hidden="true"><path d="M29 14Q31 3 39 7Q38 16 29 17" fill="#397d58"/><path d="M30 17C9 1 0 29 13 44Q30 62 47 44C60 29 51 1 30 17" fill="${colours[fruit]}"/><path d="M16 24Q11 31 17 39" fill="none" stroke="#fff" opacity=".6" stroke-width="4" stroke-linecap="round"/></svg>`};
+const fruitSVG=(fruit)=>{
+ const shapes=[
+  '<path d="M9 12C5 39 24 59 46 45Q55 39 53 29C40 44 21 36 17 13Z" fill="#f3c448" stroke="#b18721" stroke-width="2"/><path d="M9 12L10 7L17 8L17 13M46 45L51 45" fill="none" stroke="#6b633a" stroke-width="4"/>',
+  '<path d="M8 24Q30 12 52 24Q48 42 30 55Q12 42 8 24" fill="#ed5369" stroke="#b73351" stroke-width="2"/><path d="M30 21L13 13L18 24L7 27L24 29L30 36L36 28L53 27L43 22L47 13Z" fill="#397d58"/><g fill="#ffe5a1"><ellipse cx="20" cy="34" rx="1.5" ry="2"/><ellipse cx="39" cy="34" rx="1.5" ry="2"/><ellipse cx="25" cy="43" rx="1.5" ry="2"/><ellipse cx="34" cy="44" rx="1.5" ry="2"/></g>',
+  '<path d="M30 17C9 1 0 29 13 44Q30 62 47 44C60 29 51 1 30 17" fill="#88b948" stroke="#5e8930" stroke-width="2"/><path d="M29 16L31 7M32 12Q34 2 44 7Q41 17 32 12" fill="#397d58" stroke="#397d58" stroke-width="3"/>',
+  '<path d="M28 15L31 5M30 10Q43 2 48 12Q40 19 30 10" fill="#397d58" stroke="#397d58" stroke-width="3"/><g fill="#a37bdf" stroke="#7652ad" stroke-width="2"><circle cx="22" cy="23" r="9"/><circle cx="39" cy="23" r="9"/><circle cx="15" cy="36" r="9"/><circle cx="31" cy="36" r="9"/><circle cx="46" cy="36" r="9"/><circle cx="23" cy="48" r="9"/><circle cx="39" cy="48" r="9"/><circle cx="31" cy="55" r="5"/></g>'
+ ];return '<svg viewBox="0 0 60 62" aria-hidden="true">'+shapes[fruit]+'</svg>';
+};
 const names=()=>Array.from({length:isBoard?state.names.length:game==='domino'?state.hands.length:2},(_,i)=>t('플레이어 {n}',{n:i+1})+(mode==='ai'&&i===1?' · AI':''));
 const currentTurn=()=>game==='chess'?(chess.isGameOver()?-1:chess.turn()==='w'?0:1):state?.turn??0;
 function setStatus(text){$('board-status').textContent=text}
@@ -20,13 +27,13 @@ function lobby(preserve=false){
  $('board-lobby').hidden=false;$('board-play').hidden=true;const panel=$('board-modes');panel.replaceChildren();
  const modes=game==='memory'?[['solo','혼자 플레이']]:game==='jenga'?[['solo','혼자 플레이'],['ai','AI 대전'],['local','로컬 대전']]:[['ai','AI 대전'],['local','로컬 대전']];
  panel.append(selectField('play-mode','게임 모드',modes,modes[0][0]));
- if(['rummikub','jenga','halli-galli','domino'].includes(game))panel.append(selectField('play-count','인원',[['2','2'],['3','3'],['4','4']],'2'));
+ if(['rummikub','jenga','halli-galli','domino'].includes(game)){panel.append(selectField('play-count','인원',[['2','2'],['3','3'],['4','4']],'2'));const updateCount=()=>{$('play-count').disabled=$('play-mode').value!=='local'};$('play-mode').onchange=updateCount;updateCount()}
  if(game==='gomoku')panel.append(selectField('play-rule','게임 모드',[['free','자유 규칙'],['renju','금수 규칙']],'free'));
  if(['chess','memory'].includes(game))panel.append(selectField('play-level','난이도',[['easy','쉬움'],['normal','보통'],['hard','어려움']],'normal'));
  const start=button(t('시작'),()=>startGame($('play-mode').value),false,'game-button primary');start.id='game-start';panel.append(start);
  if(isBoard&&!offline){const onlinePanel=node('div',undefined,'online-modes');onlinePanel.append(node('span',t('온라인 2인')),button(t('친구 초대'),()=>startOnline('invite')),button(t('매칭'),()=>startOnline('queue')));panel.append(onlinePanel)}
  const room=new URLSearchParams(location.search).get('room');if(isBoard&&room&&!offline)panel.append(button(t('친구 초대'),()=>startOnline('join',room),false,'game-button primary'));
- for(const [id,value]of Object.entries(saved))if($(id))$(id).value=value;setStatus('');
+ for(const [id,value]of Object.entries(saved))if($(id))$(id).value=value;$('play-mode').onchange?.();setStatus('');
 }
 async function stopOnline(){if(online){const old=online;online=null;fetch('https://royal-room-nov12-e295.mutedwand2.chatgpt.site/api/board/leave',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({token:old.token,game}),keepalive:true}).catch(()=>{})}}
 function startGame(m){
@@ -153,7 +160,7 @@ function updateClock(){if(game!=='memory'||!state)return;const elapsed=state.sta
 async function request(action,data={}){const r=await fetch('https://royal-room-nov12-e295.mutedwand2.chatgpt.site/api/board/'+action,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({game,token:online.token,...data}),signal:AbortSignal.timeout(12000)});if(!r.ok)throw Error('network');return r.json()}
 function showOnline(v){if(!online||v.version<online.version)return;const changed=v.version!==online.version;online.version=v.version;state=v.state;seat=v.seat;hand=v.hand||[];if(changed){draft=structuredClone(state.sets||[]);selected.clear()}
  $('board-lobby').hidden=true;$('board-play').hidden=false;
- if(v.waiting){setStatus(t('친구를 기다리는 중'));$('board-table').replaceChildren();$('board-invite').hidden=!v.room;if(v.room){const url=new URL('/'+game+'/', 'https://webtronics.run.place');url.searchParams.set('room',v.room);$('board-invite-url').href=url.href;$('board-invite-url').textContent=url.href;drawInviteQR($('board-qr'),url.href)}return}
+ if(v.waiting){setStatus(t('친구를 기다리는 중'));$('board-table').replaceChildren();$('board-invite').hidden=!v.room;if(v.room){const url=new URL('/'+game+'/', 'https://webtronics.run.place');url.searchParams.set('room',v.room);url.searchParams.set('lang',window.LoungeI18n.language);$('board-invite-url').href=url.href;$('board-invite-url').textContent=url.href;drawInviteQR($('board-qr'),url.href)}return}
  $('board-invite').hidden=true;render();
 }
 async function startOnline(action,room){clearTimers();await stopOnline();generation++;mode='online';hiddenHand=false;setStatus(t('연결 중'));online={token:crypto.randomUUID(),version:-1};try{showOnline(await request(action,{room,name:t('플레이어 {n}',{n:1})}));pollTimer=setInterval(async()=>{if(busy||!online)return;try{showOnline(await request('state'))}catch{setStatus(t('연결에 실패했습니다. 다시 시도하세요.'))}},1200)}catch{online=null;setStatus(t('연결에 실패했습니다. 다시 시도하세요.'))}}
