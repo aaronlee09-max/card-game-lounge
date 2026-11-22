@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>교과서 서재</title>
+<style>
+:root{color-scheme:light;--ink:#142e26;--muted:#53655e;--paper:#f5f4ed;--green:#21533f;--line:#d8ded5}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.6 system-ui,sans-serif}
+main{max-width:1090px;margin:auto;padding:54px 24px}
+header{padding:34px;background:var(--ink);color:#fafff6;border-radius:26px}
+header p{margin:0;color:#d3e6d5} h1{font-size:clamp(2.4rem,7vw,4rem);line-height:1.1;margin:.3em 0}
+fieldset{border:0;padding:0;margin:0;min-width:0} legend{font-weight:700;margin-bottom:6px}
+.controls,.actions{display:flex;gap:9px;flex-wrap:wrap;align-items:center}
+.controls{margin:24px 0 12px}
+button,input,select,a.action{font:inherit}
+button,a.action,select,input[type=search]{border:1px solid var(--line);border-radius:10px;padding:8px 12px;background:#fff;color:var(--ink)}
+button,a.action{cursor:pointer;text-decoration:none} button[aria-pressed=true],.primary,a.primary{background:var(--green);border-color:var(--green);color:white}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #a3631d;outline-offset:2px}
+input[type=search]{width:min(100%,19rem);margin-left:auto}
+#books{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,260px),1fr));gap:14px;padding:0;list-style:none}
+.card{background:#fff;border:1px solid var(--line);border-radius:17px;padding:17px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.card h2,.card p{margin:0}.card h2{font-size:1.2rem;overflow-wrap:anywhere}
+.meta,#summary,#notice{color:var(--muted);font-size:.9rem}
+.tag{align-self:flex-start;background:#e6f1e7;color:#244831;border-radius:20px;padding:2px 10px;font-size:.82rem}
+.card .actions{margin-top:auto;padding-top:8px}
+small{overflow-wrap:anywhere;color:var(--muted)}
+[hidden]{display:none!important}
+@media(max-width:540px){main{padding:20px 14px}header{padding:24px}input[type=search]{margin-left:0;width:100%}}
+</style>
+</head>
+<body>
+<main>
+<header>
+<p>2026학년도 · 과천중앙고등학교</p>
+<h1>교과서 서재</h1>
+<p>고1·고2는 2022 개정, 고3은 2015 개정 교과서입니다.</p>
+</header>
+<div class="controls">
+<fieldset><legend>학년</legend><div class="actions" id="grades">
+<button type="button" data-grade="0" aria-pressed="true">전체</button>
+<button type="button" data-grade="1" aria-pressed="false">고1</button>
+<button type="button" data-grade="2" aria-pressed="false">고2</button>
+<button type="button" data-grade="3" aria-pressed="false">고3</button>
+</div></fieldset>
+<label for="query">책 검색</label>
+<input id="query" type="search" placeholder="과목, 출판사, 저자">
+<label for="filter">PDF 상태</label>
+<select id="filter"><option value="all">전체</option><option value="ready">이 기기에 추가됨</option><option value="missing">이 기기에 없음</option></select>
+</div>
+<div class="actions"><button id="bulk" type="button" class="primary">PDF 여러 개 추가</button><span class="meta">이름이 과목과 일치하는 PDF를 자동으로 넣습니다.</span></div>
+<p id="notice" role="status"></p>
+<p id="summary" aria-live="polite"></p>
+<ul id="books"></ul>
+<input id="picker" type="file" accept=".pdf,application/pdf" hidden>
+</main>
+<script type="application/json" id="catalog">
+[{"grade":1,"title":"공통수학1","publisher":"(주)천재교과서","author":"전인태","collected":false},{"grade":1,"title":"공통수학2","publisher":"(주)천재교과서","author":"전인태","collected":false},{"grade":1,"title":"공통영어1","publisher":"(주)엔이능률","author":"민병천","collected":true},{"grade":1,"title":"공통영어2","publisher":"(주)와이비엠","author":"김은형","collected":true},{"grade":1,"title":"통합사회1","publisher":"㈜창비교육","author":"조철기","collected":false},{"grade":1,"title":"통합사회2","publisher":"㈜창비교육","author":"조철기","collected":false},{"grade":1,"title":"과학탐구실험1","publisher":"(주)비상교육","author":"심규철","collected":true},{"grade":1,"title":"과학탐구실험2","publisher":"(주)비상교육","author":"심규철","collected":true},{"grade":1,"title":"체육1","publisher":"(주)와이비엠","author":"김경래","collected":true},{"grade":1,"title":"체육2","publisher":"(주)와이비엠","author":"김경래","collected":true},{"grade":1,"title":"공통국어1","publisher":"(주)미래엔","author":"신유식","collected":true},{"grade":1,"title":"공통국어2","publisher":"(주)미래엔","author":"신유식","collected":true},{"grade":1,"title":"한국사1","publisher":"(주)미래엔","author":"강승호","collected":true},{"grade":1,"title":"한국사2","publisher":"(주)미래엔","author":"강승호","collected":true},{"grade":1,"title":"통합과학1","publisher":"(주)미래엔","author":"오현선","collected":true},{"grade":1,"title":"통합과학2","publisher":"(주)미래엔","author":"오현선","collected":true},{"grade":1,"title":"미술","publisher":"(주)미래엔","author":"유지연","collected":true},{"grade":1,"title":"음악","publisher":"(주)미래엔","author":"조성기","collected":true},{"grade":2,"title":"문학","publisher":"(주)미래엔","author":"방민호","collected":true},{"grade":2,"title":"주제탐구독서","publisher":"(주)비상교육","author":"임영환","collected":true},{"grade":2,"title":"화법과언어","publisher":"(주)미래엔","author":"민병곤","collected":true},{"grade":2,"title":"문학과영상","publisher":"(주)미래엔","author":"장은주","collected":true},{"grade":2,"title":"대수","publisher":"(주)비상교육","author":"김원경","collected":true},{"grade":2,"title":"경제수학","publisher":"(주)씨마스","author":"김서령","collected":true},{"grade":2,"title":"미적분Ⅰ","publisher":"(주)비상교육","author":"김원경","collected":true},{"grade":2,"title":"기하","publisher":"(주)천재교과서","author":"전인태","collected":false},{"grade":2,"title":"인공지능수학","publisher":"(주)씨마스","author":"윤상운","collected":true},{"grade":2,"title":"영어Ⅰ","publisher":"(주)와이비엠","author":"박준언","collected":true},{"grade":2,"title":"영미문학읽기","publisher":"(주)이젠교육","author":"전영주","collected":false},{"grade":2,"title":"영어Ⅱ","publisher":"(주)엔이능률","author":"오선영","collected":true},{"grade":2,"title":"영어발표와토론","publisher":"(주)천재교과서","author":"김현진","collected":false},{"grade":2,"title":"스포츠생활1","publisher":"(주)동아출판","author":"최의창","collected":false},{"grade":2,"title":"스포츠생활2","publisher":"(주)동아출판","author":"최의창","collected":false},{"grade":2,"title":"중국어","publisher":"(주)엔이능률","author":"유성진","collected":false},{"grade":2,"title":"중국어회화","publisher":"(주)천재교과서","author":"김대오","collected":false},{"grade":2,"title":"일본어","publisher":"(주)도서출판길벗","author":"박윤원","collected":false},{"grade":2,"title":"일본어회화","publisher":"(주)도서출판길벗","author":"박윤원","collected":false},{"grade":2,"title":"정보","publisher":"(주)천재교과서","author":"김현철","collected":false},{"grade":2,"title":"인공지능기초","publisher":"(주)천재교과서","author":"김현철","collected":false},{"grade":2,"title":"세계시민과지리","publisher":"(주)미래엔","author":"조성호","collected":true},{"grade":2,"title":"도시의미래탐구","publisher":"(주)비상교육","author":"최영진","collected":true},{"grade":2,"title":"경제","publisher":"(주)비상교육","author":"유종렬","collected":true},{"grade":2,"title":"정치","publisher":"(주)비상교육","author":"정필운","collected":false},{"grade":2,"title":"사회와문화","publisher":"(주)천재교과서","author":"박윤경","collected":false},{"grade":2,"title":"현대사회와윤리","publisher":"(주)비상교육","author":"김국현","collected":false},{"grade":2,"title":"윤리와사상","publisher":"(주)리베르스쿨","author":"류지한","collected":false},{"grade":2,"title":"세계사","publisher":"(주)천재교과서","author":"김덕수","collected":false},{"grade":2,"title":"동아시아역사기행","publisher":"(주)천재교과서","author":"김정인","collected":false},{"grade":2,"title":"물리학","publisher":"(주)동아출판","author":"남경식","collected":false},{"grade":2,"title":"화학","publisher":"(주)비상교육","author":"최원호","collected":false},{"grade":2,"title":"생명과학","publisher":"(주)미래엔","author":"오현선","collected":true},{"grade":2,"title":"과학과제연구","publisher":"-","author":"-","collected":false},{"grade":2,"title":"지구과학","publisher":"(주)비상교육","author":"이기영","collected":false},{"grade":2,"title":"역학과에너지","publisher":"(주)동아출판","author":"남경식","collected":false},{"grade":2,"title":"물질과에너지","publisher":"(주)비상교육","author":"최원호","collected":false},{"grade":2,"title":"세포와물질대사","publisher":"(주)미래엔","author":"오현선","collected":true},{"grade":3,"title":"영어독해와 작문","publisher":"(주)와이비엠","author":"신정현","collected":false},{"grade":3,"title":"운동과 건강","publisher":"(주)천재교과서","author":"이종영","collected":false},{"grade":3,"title":"음악 감상과 비평","publisher":"(주)와이비엠","author":"양은주","collected":false},{"grade":3,"title":"미술 감상과 비평","publisher":"미진사","author":"박재희","collected":false},{"grade":3,"title":"일본문화","publisher":"(사)한국검인정(경기교육청)","author":"홍민표","collected":false},{"grade":3,"title":"중국문화","publisher":"(사)한국검인정(서울교육청)","author":"임승규","collected":false},{"grade":3,"title":"정보과학","publisher":"(주)삼양미디어","author":"전현석","collected":false},{"grade":3,"title":"(지구촌과 함께하는) 세계시민","publisher":"(주)와이비엠","author":"경기도교육감","collected":false},{"grade":3,"title":"심화 국어","publisher":"상문연구사","author":"석은동","collected":false},{"grade":3,"title":"확률과 통계","publisher":"(주)좋은책신사고","author":"고성은","collected":false},{"grade":3,"title":"미적분","publisher":"(주)좋은책신사고","author":"고성은","collected":false},{"grade":3,"title":"세계사","publisher":"(주)금성출판사","author":"김형종","collected":false},{"grade":3,"title":"여행지리","publisher":"(주)천재교과서","author":"박종관","collected":false},{"grade":3,"title":"물리학Ⅱ","publisher":"(주)지학사","author":"김성원","collected":false},{"grade":3,"title":"화학Ⅱ","publisher":"(주)천재교육","author":"노태희","collected":false},{"grade":3,"title":"생명과학Ⅱ","publisher":"(주)비상교육","author":"심규철","collected":false},{"grade":3,"title":"지구과학Ⅱ","publisher":"(주)비상교육","author":"이기영","collected":false},{"grade":3,"title":"생태와 환경","publisher":"(사)한국검인정(대전교육청)","author":"김찬국","collected":false},{"grade":3,"title":"단체운동","publisher":"(사)한국검인정(경남교육청)","author":"박상철","collected":false},{"grade":3,"title":"사회문제 탐구","publisher":"(사)한국검인정(전북교육청)","author":"모경환","collected":false},{"grade":3,"title":"언어와매체","publisher":"(주)미래엔","author":"방민호","collected":false},{"grade":3,"title":"화법과 작문","publisher":"㈜ 미래엔","author":"민병곤","collected":false},{"grade":3,"title":"세계지리","publisher":"(주)미래엔","author":"박철웅","collected":false},{"grade":3,"title":"경제","publisher":"(주)미래엔","author":"김진영","collected":false},{"grade":3,"title":"윤리와 사상","publisher":"(주)미래엔","author":"정창우","collected":false}]
+</script>
+<script>
+const books = JSON.parse(document.querySelector('#catalog').textContent);
+const query = document.querySelector('#query');
+const picker = document.querySelector('#picker');
+const filter = document.querySelector('#filter');
+const notice = document.querySelector('#notice');
+const list = document.querySelector('#books');
+const attachments = new Map();
+const previewUrls = new Map();
+let grade = 0;
+let activeBook = null;
+
+function database() {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open('textbook-pdfs', 1);
+    request.onupgradeneeded = () => request.result.createObjectStore('files');
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
+  });
+}
+const storage = database().catch(() => null);
+function id(book) {
+  return [book.grade, book.title, book.publisher, book.author].join('|');
+}
+function simplify(value) {
+  return value.normalize('NFKC').toLowerCase().replace(/[^\p{L}\p{N}]/gu, '');
+}
+function element(tag, content, className) {
+  const node = document.createElement(tag);
+  if (content) node.textContent = content;
+  if (className) node.className = className;
+  return node;
+}
+function selectFile(book) {
+  activeBook = book;
+  picker.multiple = !book;
+  picker.value = '';
+  picker.click();
+}
+function render() {
+  const search = simplify(query.value);
+  const matches = books.filter(book => {
+    const ready = attachments.has(id(book));
+    return (!grade || book.grade === grade)
+      && (filter.value === 'all' || ready === (filter.value === 'ready'))
+      && simplify([book.title, book.publisher, book.author].join(' ')).includes(search);
+  });
+  const totals = grade ? books.filter(book => book.grade === grade) : books;
+  const saved = totals.filter(book => attachments.has(id(book))).length;
+  document.querySelector('#summary').textContent =
+    `표시 ${matches.length}권 · 이 기기에 추가된 PDF ${saved}/${totals.length}권`;
+  list.replaceChildren();
+  for (const book of matches) {
+    const key = id(book);
+    const file = attachments.get(key);
+    const card = element('li', '', 'card');
+    card.append(element('span', `고${book.grade}`, 'tag'), element('h2', book.title),
+      element('p', [book.publisher, book.author].filter(value => value && value !== '-').join(' · '), 'meta'));
+    card.append(element('small', file ? file.name : book.collected ? '기존 교과서 ZIP에서 PDF 추가 가능' : 'PDF 미확보'));
+    const actions = element('div', '', 'actions');
+    if (file) {
+      const open = element('a', 'PDF 열기 ↗', 'action primary');
+      if (!previewUrls.has(key)) previewUrls.set(key, URL.createObjectURL(file));
+      open.href = previewUrls.get(key);
+      open.target = '_blank';
+      open.rel = 'noopener';
+      actions.append(open);
+    }
+    const add = element('button', file ? 'PDF 교체' : 'PDF 추가');
+    add.type = 'button';
+    add.setAttribute('aria-label', `${book.title} ${add.textContent}`);
+    add.onclick = () => selectFile(book);
+    actions.append(add);
+    card.append(actions);
+    list.append(card);
+  }
+  if (!matches.length) list.append(element('li', '조건에 맞는 교과서가 없어요.'));
+}
+function identify(file) {
+  const name = simplify(file.name.replace(/\.pdf$/i, ''));
+  const fixedGrade = file.name.match(/(?:^|\s)([123])학년/)?.[1];
+  const candidates = books.filter(book => (!fixedGrade || book.grade === Number(fixedGrade))
+    && name.includes(simplify(book.title)));
+  const exactTitles = candidates.filter(book => simplify(book.title) === name);
+  if (exactTitles.length === 1) return exactTitles[0];
+  const withAuthor = candidates.filter(book => book.author && book.author !== '-' && name.includes(simplify(book.author)));
+  const ranked = (withAuthor.length ? withAuthor : candidates).sort((a, b) => simplify(b.title).length - simplify(a.title).length);
+  if (ranked.length === 1 || (ranked.length > 1 && simplify(ranked[0].title).length > simplify(ranked[1].title).length)) return ranked[0];
+  return undefined;
+}
+async function saveFiles(files) {
+  const db = await storage;
+  if (!db) return false;
+  return new Promise(resolve => {
+    const transaction = db.transaction('files', 'readwrite');
+    transaction.oncomplete = () => resolve(true);
+    transaction.onabort = () => resolve(false);
+    for (const [key, file] of files) transaction.objectStore('files').put(file, key);
+  });
+}
+document.querySelector('#grades').addEventListener('click', event => {
+  if (!event.target.matches('button[data-grade]')) return;
+  grade = Number(event.target.dataset.grade);
+  for (const button of event.currentTarget.querySelectorAll('button')) {
+    button.setAttribute('aria-pressed', String(button === event.target));
+  }
+  render();
+});
+query.addEventListener('input', render);
+filter.addEventListener('change', render);
+document.querySelector('#bulk').onclick = () => selectFile(null);
+picker.addEventListener('change', async () => {
+  const files = [...picker.files];
+  const selectedBook = activeBook;
+  const additions = new Map();
+  const skipped = [];
+  for (const file of files) {
+    const header = await file.slice(0, 1024).text().catch(() => '');
+    const book = header.includes('%PDF-') && (selectedBook || identify(file));
+    if (!book || additions.has(id(book))) { skipped.push(file.name); continue; }
+    additions.set(id(book), file);
+  }
+  const saved = !additions.size || await saveFiles(additions).catch(() => false);
+  for (const [key, file] of additions) {
+    attachments.set(key, file);
+    if (previewUrls.has(key)) URL.revokeObjectURL(previewUrls.get(key));
+    previewUrls.delete(key);
+  }
+  notice.textContent = [
+    `PDF ${additions.size}개 추가.`,
+    skipped.length ? `자동 추가 실패 ${skipped.length}개. 해당 과목의 PDF 추가 버튼을 사용해 주세요. ${skipped.join(', ')}` : '',
+    saved ? '' : '기기에 저장하지 못해 이 탭에서만 열 수 있어요.'
+  ].filter(Boolean).join(' ');
+  render();
+});
+storage.then(db => {
+  if (!db) return;
+  const request = db.transaction('files', 'readonly').objectStore('files').openCursor();
+  request.onsuccess = () => {
+    const cursor = request.result;
+    if (!cursor) { render(); return; }
+    if (!attachments.has(cursor.key)) attachments.set(cursor.key, cursor.value);
+    cursor.continue();
+  };
+});
+render();
+</script>
+</body>
+</html>
