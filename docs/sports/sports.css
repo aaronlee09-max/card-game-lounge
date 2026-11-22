@@ -5,3 +5,11 @@ button:focus-visible,select:focus-visible,a:focus-visible{outline:3px solid #ffe
 canvas{background:#183951;width:100%;height:auto;display:block;border-radius:9px}
 .score,.controls{display:flex;justify-content:space-between;gap:8px}.score{margin-bottom:8px;font-weight:700}#red{color:#ffaaaa}#blue{color:#9bdaff}
 fieldset{flex:1;min-width:0;border:1px solid #8094bd;border-radius:8px;padding:5px;display:flex;gap:4px;flex-wrap:wrap}fieldset button{flex:1;padding:4px;min-width:32px;touch-action:none;user-select:none}fieldset button:last-child{min-width:48px}
+
+body{background:linear-gradient(145deg,#0a1721,#17292f);min-height:100vh}
+main{max-width:920px}header{display:flex;justify-content:space-between;align-items:center;margin:24px 0 8px}header h1{margin:0}header small,nav small{color:#a6c2bf}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:10px}.grid a{padding:18px;color:white;border:1px solid #507071;border-radius:8px;text-decoration:none;background:#183234}.grid strong,.grid small{display:block}.grid small{margin-top:5px}
+.score{font-variant-numeric:tabular-nums;padding:10px 0}canvas{border:1px solid #586a70;box-sizing:border-box}#status{min-height:1.5em}
+.network{display:flex;gap:12px;align-items:center;flex-wrap:wrap}.network button{background:#155749}#qr{width:185px;height:185px;margin:10px 0;background:white}body[data-remote="guest"] fieldset:first-child,body[data-remote="host"] fieldset:last-child{display:none}
+fieldset button{min-height:54px}fieldset button:active{background:#50878b}fieldset{padding:8px}#court{touch-action:pan-y}body[data-remote] fieldset button{min-height:62px}
+@media(max-width:600px){main{padding:12px 8px}.controls{gap:4px}fieldset{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));padding:4px}fieldset button{min-width:0!important;padding:0}fieldset button:first-of-type{grid-column:2}fieldset button:nth-of-type(2){grid-column:1}fieldset button:last-child{grid-column:1/-1}body[data-remote] fieldset{display:flex}legend{font-size:12px}header{margin-top:12px}}
