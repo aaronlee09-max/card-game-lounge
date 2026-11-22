@@ -1,0 +1,7 @@
+:root{color-scheme:dark;font-family:system-ui,sans-serif;background:#11172e;color:#f7f8ff}
+body{margin:0}main{max-width:850px;margin:auto;padding:22px 14px 32px}a{color:#b2d4ff}h1{margin-bottom:8px}
+button,select{font:inherit;min-height:44px;color:inherit;background:#253354;border:1px solid #8094bd;border-radius:8px;padding:6px 10px}
+button:focus-visible,select:focus-visible,a:focus-visible{outline:3px solid #ffe77d;outline-offset:2px}
+canvas{background:#183951;width:100%;height:auto;display:block;border-radius:9px}
+.score,.controls{display:flex;justify-content:space-between;gap:8px}.score{margin-bottom:8px;font-weight:700}#red{color:#ffaaaa}#blue{color:#9bdaff}
+fieldset{flex:1;min-width:0;border:1px solid #8094bd;border-radius:8px;padding:5px;display:flex;gap:4px;flex-wrap:wrap}fieldset button{flex:1;padding:4px;min-width:32px;touch-action:none;user-select:none}fieldset button:last-child{min-width:48px}

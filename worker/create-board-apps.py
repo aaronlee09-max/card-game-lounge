@@ -49,7 +49,8 @@ allgames=[('moonring','달의 고리','#3d415e','/moon-192.png','/moon-install.h
 # Preserve the original home composition; append seven cards in the same style.
 home=Path('worker/lounge-template.html').read_text()
 newcards=''.join(f'<article class="game-card" style="background:{c}"><img src="/{g}/icon-192.png" alt="" width="88" height="88"><h2>{n}</h2><p>{"혼자 플레이 · 최고 기록" if g=="memory" else "혼자 플레이 · 로컬 대전" if g=="jenga" else "AI 대전 · 로컬 대전"}</p><a class="primary" href="/{g}/">시작</a><a href="/{g}/install.html">설치 및 다운로드</a></article>' for i,(g,n,c) in enumerate(games))
-home=home.replace('</section><p class="intro">',newcards+'</section><p class="intro">',1)
+sports_card = '<article class="game-card"><h2>2인용 스포츠</h2><p>축구, 테니스, 양궁 등 20종 · 키보드와 터치로 로컬 대전</p><a class="primary" href="/sports/">종목 선택</a></article>'
+home=home.replace('</section><p class="intro">',newcards+sports_card+'</section><p class="intro">',1)
 # Use a fully translated short subtitle while retaining the original heading and layout.
 home=home.replace('달의 고리 · 우노 · 블랙잭<br>','10가지 게임 · 하나의 라운지<br>')
 home=home.replace('20261119-final',version).replace('install.js?v=27','install.js?v='+version)
