@@ -57,7 +57,10 @@ export function precision(g){
    ball={...start,vx:Math.cos(angle)*speed,vy:Math.sin(angle)*speed,team:turn,curve:aimY*.00035};
    if(golf){strokes[turn]++;g.score[turn]++}
  }
- return {tick(){
+ return {cpu(){
+   const phase=g.time%95;
+   return {left:golf&&phase<10&&aimX>-19,up:hoop&&phase<19&&aimY>-34,act:turn===1&&(ball?curl:phase<(hoop?69:curl?66:56))};
+ },tick(){
    const k=g.keys[turn];
    if(!ball){
      aimX=clamp(aimX+(+k.right-+k.left)*2,-155,155);

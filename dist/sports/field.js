@@ -7,7 +7,10 @@ export function field(g){
  let ball,owner=-1,free=0,held=0;
  function serve(){ball={x:420,y:220,vx:0,vy:0};owner=-1;held=0;free=0;players.forEach((p,i)=>Object.assign(p,{x:i?620:220,y:220,vx:0,vy:0,power:0}))}
  serve();
- return {tick(){
+ return {cpu(){
+   const p=players[1],x=owner===1?35:ball.x,y=owner===1?220:ball.y;
+   return {left:p.x>x+5,right:p.x<x-5,up:p.y>y+5,down:p.y<y-5,act:owner===1?(p.x>270||g.time%65<39):g.time%40<10};
+ },tick(){
    free--;held++;
    players.forEach((p,i)=>{
      const k=g.keys[i],dx=+k.right-+k.left,dy=+k.down-+k.up;

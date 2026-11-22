@@ -3,7 +3,10 @@ export function race(g){
  const row=g.id==='rowing',bike=g.id==='cycling',ice=g.id==='speed-skating';
  const length=row?250:bike?400:ice?200:100;
  const racers=[0,1].map(()=>({m:0,v:0,last:-100,side:'',hold:0,energy:100}));
- return {tick(){
+ return {cpu(){
+   const beat=row?68:bike?12:ice?32:16, phase=g.time%beat;
+   return {left:!row&&phase===0&&Math.floor(g.time/beat)%2===0,right:!row&&phase===0&&Math.floor(g.time/beat)%2===1,act:row?phase<35:bike&&g.time%520<140};
+ },tick(){
    racers.forEach((p,i)=>{
      const taps=g.tap[i],k=g.keys[i],gap=g.time-p.last;
      if(row){
@@ -41,7 +44,7 @@ export function duel(g){
  const sword=g.id==='fencing';let fighters;
  function reset(){fighters=[0,1].map(i=>({x:i?570:270,guard:0,energy:100,hp:100,attack:0,cool:0,hit:false}))}
  reset();
- return {tick(){
+ return {cpu(){const distance=fighters[1].x-fighters[0].x;return {left:distance>(sword?95:60),right:distance<49,down:g.time%91<13,act:distance<(sword?110:68)&&g.time%43<5}},tick(){
    fighters.forEach((p,i)=>{
      const k=g.keys[i];p.cool--;p.attack=Math.max(0,p.attack-1);p.guard=Math.max(0,p.guard-1);
      const dir=i?-1:1,q=fighters[1-i];

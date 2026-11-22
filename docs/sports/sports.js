@@ -36,7 +36,7 @@ function advance(f){
 }
 reset();
 const match=connect(id,{reset,change,advance});
-function input(i,key,down){if(match.online())match.input(key,down);else change(i,key,down)}
+function input(i,key,down){if(match.online())match.input(key,down);else if(!match.practice()||i===0)change(i,key,down)}
 document.querySelectorAll('fieldset').forEach((pad,i)=>pad.querySelectorAll('button').forEach(button=>{
  const key=names.indexOf(button.dataset.control);
  button.addEventListener('pointerdown',e=>{e.preventDefault();button.setPointerCapture(e.pointerId);input(i,key,true)});
@@ -54,7 +54,7 @@ document.querySelector('#restart').onclick=()=>match.restart();
 let previous=performance.now(),carry=0;
 function loop(now){
  carry+=Math.min(80,now-previous);previous=now;
- while(carry>=1000/60){carry-=1000/60;if(match.drives()){const f=frame();advance(f);match.sendFrame(f)}}
+ while(carry>=1000/60){carry-=1000/60;if(match.drives()){if(match.practice()&&!g.over){const ai=game.cpu();names.forEach((name,k)=>change(1,k,Boolean(ai[name])))}const f=frame();advance(f);match.sendFrame(f)}}
  paint();requestAnimationFrame(loop);
 }
 requestAnimationFrame(loop);

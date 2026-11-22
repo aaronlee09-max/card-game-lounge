@@ -13,7 +13,10 @@ export function net(g){
    server=ping?(Math.floor((a+b)/(a>=10&&b>=10?1:2))%2):i;serve();g.note((i?'파랑':'빨강')+' 득점 · '+(server?'파랑':'빨강')+' 서브')
  }
  serve();g.note('빨강 서브 · 동작 버튼');
- return {tick(){
+ return {cpu(){
+   const p=players[1],x=waiting?655:clamp(ball.x+ball.vx*8,445,795);
+   return {left:p.x>x+9,right:p.x<x-9,up:volley&&Math.abs(x-p.x)<52&&g.time%37<4,act:waiting?server===1&&g.time%45<5:last===0&&Math.abs(p.x-ball.x)<65&&Math.abs(floor-60+p.j-ball.y)<75&&(!ping||bounces===1)&&g.time%8<4};
+ },tick(){
    players.forEach((p,i)=>{
      const k=g.keys[i];p.x=clamp(p.x+(+k.right-+k.left)*5,i?438:42,i?798:400);
      if(volley&&g.tap[i].up&&p.j===0)p.v=-8.5;
