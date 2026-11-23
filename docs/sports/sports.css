@@ -15,3 +15,9 @@ fieldset button{min-height:54px}fieldset button:active{background:#50878b}fields
 @media(max-width:600px){main{padding:12px 8px}.controls{gap:4px}fieldset{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));padding:4px}fieldset button{min-width:0!important;padding:0}fieldset button:first-of-type{grid-column:2}fieldset button:nth-of-type(2){grid-column:1}fieldset button:last-child{grid-column:1/-1}body[data-remote] fieldset{display:flex}legend{font-size:12px}header{margin-top:12px}}
 #invite{max-width:100%;width:min(100%,390px);box-sizing:border-box;padding:10px}
 #qr[hidden]{display:none}
+.controls fieldset,body[data-remote] .controls fieldset{display:flex;flex-wrap:wrap}
+.swipe-surface{display:grid;position:relative;place-content:center;text-align:center;min-height:96px;flex:2 1 90px;touch-action:none;user-select:none;-webkit-user-select:none;background:#203d49;border:1px solid #648c9b;border-radius:14px;color:#e9ffff;line-height:1.35}
+.swipe-surface span{display:block;transform:translate(var(--swipe-x,0),var(--swipe-y,0));pointer-events:none}
+.swipe-action{flex:1 1 70px;padding:0 5px;background:#265347;font-size:13px;font-weight:700}
+body[data-remote="guest"] .controls fieldset:first-child,body[data-remote="host"] .controls fieldset:last-child{display:none}
+.gesture-help{font-size:14px;color:#b9d4d5;margin:12px 0 8px}
