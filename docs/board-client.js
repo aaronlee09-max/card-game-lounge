@@ -31,11 +31,11 @@ function clearTimers(){clearTimeout(botTimer);clearTimeout(closeTimer);clearInte
 function selectField(id,key,options,value){const l=node('label',t(key));const s=node('select');s.id=id;for(const [v,label]of options){const o=node('option',t(label));o.value=v;s.append(o)}s.value=value;l.append(s);return l}
 const matchChoices=[['queue','자동 매칭'],['link','링크 초대 매칭'],['qr','QR 초대 매칭']];
 function matchSetup(kind,room){
- const panel=$('board-modes'), level=$('play-level').value;
+ const panel=$('board-modes'), level=(room&&new URLSearchParams(location.search).get('level'))||$('play-level').value;
  panel.replaceChildren();
  const title=room?'친구 초대 참여':matchChoices.find(([key])=>key===kind)[1];
  const form=node('form',undefined,'online-modes'),label=node('label',t('이름')),name=node('input');
- name.maxLength=20;name.autocomplete='nickname';label.append(name);
+ name.placeholder=t('플레이어 {n}',{n:room?2:1});name.maxLength=20;name.autocomplete='nickname';label.append(name);
  const submit=node('button',t(room?'참여하기':kind==='queue'?'매칭 시작':'초대 방 만들기'),'game-button primary');
  submit.type='submit';
  form.onsubmit=event=>{
@@ -221,7 +221,7 @@ function renderMemory(table){
  table.append(board);updateClock();
 }
 function updateClock(){if(game!=='memory'||!state)return;if(online){const stats=$('memory-stats');if(stats)stats.textContent=t('플레이어 {n}',{n:seat+1})+' · '+state.matched.length/2+'/'+state.cards.length/2;return;}const elapsed=state.started===null?0:(state.ended??performance.now())-state.started,best=readBest();const stats=$('memory-stats');if(stats)stats.textContent=t('시간')+' '+(elapsed/1000).toFixed(1)+' s · '+t('시도')+' '+state.attempts+' · '+t('짝')+' '+state.matched.length/2+'/'+state.cards.length/2+' · '+t('최고 기록')+' '+(best?(best/1000).toFixed(1)+' s':'—')+(state.newBest?' · '+t('새 기록!'):'')}
-async function request(action,data={}){const r=await fetch('https://royal-room-nov12-e295.mutedwand2.chatgpt.site/api/board/'+action,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({game:online.game,token:online.token,...data}),signal:AbortSignal.timeout(12000)});if(!r.ok)throw Object.assign(Error('network'),{status:r.status});return r.json()}
+async function request(action,data={}){const r=await fetch('https://royal-room-nov12-e295.mutedwand2.chatgpt.site/api/board/'+action,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({game:online.game,token:online.token,...data}),signal:AbortSignal.timeout(12000)});if(!r.ok){const details=await r.json().catch(()=>({}));throw Object.assign(Error(details.error||t('연결에 실패했습니다. 다시 시도하세요.')),{status:r.status})}return r.json()}
 function showOnline(v){if(!online||v.version<online.version)return;const changed=v.version!==online.version;online.version=v.version;state=v.state;seat=v.seat;hand=v.hand||[];if(changed){draft=structuredClone(state.sets||[]);selected.clear()}
  $('board-lobby').hidden=true;$('board-play').hidden=false;
  if(v.waiting&&game==='memory'){
@@ -253,7 +253,7 @@ function pollOnline(session){
   if(pending||busy||online!==session)return;
   pending=true;
   try{const v=await request('state');if(online===session)showOnline(v)}
-  catch{if(online===session)setStatus(t('연결 중'))}
+  catch(error){if(online!==session)return;if(error.status===404){clearTimers();online=null;state=null;if(game==='memory')try{sessionStorage.removeItem('memory-online')}catch{};lobby();setStatus(error.message)}else setStatus(t('연결 중'))}
   finally{pending=false}
  },1200);
 }
@@ -268,9 +268,9 @@ async function startOnline(action,room,kind,name,level,restored){
   showOnline(v);pollOnline(session);
  }catch(error){
   if(online!==session)return;
-  if(restored&&error.status===404){try{sessionStorage.removeItem('memory-online')}catch{};online=null;lobby();return}
+  if(restored&&error.status===404){try{sessionStorage.removeItem('memory-online')}catch{};online=null;state=null;lobby();setStatus(error.message);return}
   if(restored){pollOnline(session);setStatus(t('연결 중'));$('board-lobby').hidden=true;$('board-play').hidden=false}
-  else{online=null;setStatus(t('연결에 실패했습니다. 다시 시도하세요.'))}
+  else{online=null;setStatus(error.status?error.message:t('연결에 실패했습니다. 다시 시도하세요.'))}
  }
 }
 async function onlineMove(data){if(busy||!online)return;busy=true;try{showOnline(await request('move',{...data,version:online.version}))}catch{setStatus(t('규칙에 맞지 않는 동작입니다.'));try{showOnline(await request('state'))}catch{setStatus(t('연결에 실패했습니다. 다시 시도하세요.'))}}finally{busy=false}}
@@ -283,5 +283,6 @@ $('board-restart').onclick=()=>{if(!online)startGame(mode);else{generation++;cle
   let saved;try{saved=JSON.parse(sessionStorage.getItem('memory-online'))}catch{}
   const room=new URLSearchParams(location.search).get('room');
   if(saved?.token&&(!room||room===saved.room))startOnline('state',room,saved.kind,'',null,saved);
+  else if(room)matchSetup('join',room);
  }
 })();
