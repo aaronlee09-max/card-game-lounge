@@ -7,7 +7,14 @@ const node=(tag,text,cls)=>{const n=document.createElement(tag);if(text!==undefi
 const button=(label,fn,disabled=false,cls='game-button')=>{const b=node('button',label,cls);b.type='button';b.disabled=disabled;b.onclick=fn;return b};
 const templateKeys=Object.keys(window.LOUNGE_GAME_HELP||{});
 let state,chess,mode='solo',seat=0,hand=[],draft=[],selected=new Set(),hiddenHand=false,botTimer,closeTimer,clockTimer,selectedSquare=null,dominoSelected=null,online=null,pollTimer,busy=false,generation=0;
-const faces=['☀','☾','★','♜','♞','♦','♣','♥','♠','✿','⚓','♫','⚑','☂','⚡'];
+const memoryCharacters=[
+ ['미키','Mickey','#ffc16c'],['미니','Minnie','#ff91bb'],['도널드','Donald','#75c4ff'],['데이지','Daisy','#d6a7ff'],
+ ['구피','Goofy','#b9e077'],['플루토','Pluto','#ffd565'],['엘사','Elsa','#a8dcff'],['안나','Anna','#ffa2b1'],
+ ['올라프','Olaf','#bcf0ee'],['에리얼','Ariel','#7fe3cc'],['벨','Belle','#ffe093'],['자스민','Jasmine','#93eddc'],
+ ['백설공주','Snow White','#ffe2ab'],['신데렐라','Cinderella','#b7cbff'],['라푼젤','Rapunzel','#e0b1fa'],['모아나','Moana','#ffc594'],
+ ['뮬란','Mulan','#f9a2a8'],['티아나','Tiana','#c3ed94'],['스티치','Stitch','#8abaff'],['베이맥스','Baymax','#fbd1dd'],
+ ['심바','Simba','#ffce76'],['날라','Nala','#f6cfb9'],['덤보','Dumbo','#b7c6fa'],['푸','Pooh','#ffde79']
+];
 const colour=['#b92743','#1767aa','#b66b00','#17212d','#783ca0'];
 const fruitSVG=(fruit)=>{
  const shapes=[
@@ -29,13 +36,21 @@ function lobby(preserve=false){
  panel.append(selectField('play-mode','게임 모드',modes,modes[0][0]));
  if(['rummikub','jenga','halli-galli','domino'].includes(game)){panel.append(selectField('play-count','인원',[['2','2'],['3','3'],['4','4']],'2'));const updateCount=()=>{$('play-count').disabled=$('play-mode').value!=='local'};$('play-mode').onchange=updateCount;updateCount()}
  if(game==='gomoku')panel.append(selectField('play-rule','게임 모드',[['free','자유 규칙'],['renju','금수 규칙']],'free'));
- if(['chess','memory'].includes(game))panel.append(selectField('play-level','난이도',[['easy','쉬움'],['normal','보통'],['hard','어려움']],'normal'));
+ if(['chess','memory'].includes(game)){
+  const levels=[['easy','쉬움'],['normal','보통'],['hard','어려움']];
+  if(game==='memory')levels.push(['expert',document.documentElement.lang==='ko'?'찐 어려움 · 48장':'Expert · 48 cards']);
+  panel.append(selectField('play-level','난이도',levels,'normal'));
+ }
+ if(game==='memory'&&new URLSearchParams(location.search).has('room')){
+  const level=new URLSearchParams(location.search).get('level');
+  if(['easy','normal','hard','expert'].includes(level))$('play-level').value=level;
+ }
  const start=button(t('시작'),()=>startGame($('play-mode').value),false,'game-button primary');start.id='game-start';panel.append(start);
- if(isBoard&&!offline){const onlinePanel=node('div',undefined,'online-modes');onlinePanel.append(node('span',t('온라인 2인')),button(t('친구 초대'),()=>startOnline('invite')),button(t('매칭'),()=>startOnline('queue')));panel.append(onlinePanel)}
- const room=new URLSearchParams(location.search).get('room');if(isBoard&&room&&!offline)panel.append(button(t('친구 초대'),()=>startOnline('join',room),false,'game-button primary'));
+ if((isBoard||game==='memory')&&!offline){const onlinePanel=node('div',undefined,'online-modes');onlinePanel.append(node('span',t('온라인 2인')),button(t('친구 초대'),()=>startOnline('invite')),button(t('매칭'),()=>startOnline('queue')));panel.append(onlinePanel)}
+ const room=new URLSearchParams(location.search).get('room');if((isBoard||game==='memory')&&room&&!offline)panel.append(button(t('참여하기'),()=>startOnline('join',room),false,'game-button primary'));
  for(const [id,value]of Object.entries(saved))if($(id))$(id).value=value;$('play-mode').onchange?.();setStatus('');
 }
-async function stopOnline(){if(online){const old=online;online=null;fetch('https://royal-room-nov12-e295.mutedwand2.chatgpt.site/api/board/leave',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({token:old.token,game}),keepalive:true}).catch(()=>{})}}
+async function stopOnline(){if(online){const old=online;online=null;fetch('https://royal-room-nov12-e295.mutedwand2.chatgpt.site/api/board/leave',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({token:old.token,game:old.game}),keepalive:true}).catch(()=>{})}}
 function startGame(m){
  clearTimers();stopOnline();generation++;mode=m;hiddenHand=false;seat=0;hand=[];selected.clear();selectedSquare=null;dominoSelected=null;
  const count=m==='solo'?1:m==='ai'?2:Number($('play-count')?.value||2);
@@ -51,12 +66,12 @@ function boardState(){if(online)return state;const turn=state.turn<0?0:mode==='l
 function render(){
  if(!state)return;const table=$('board-table');table.replaceChildren();
  const turn=currentTurn(),who=names();let message='';if(game==='chess'&&chess.isCheckmate())state.scores[chess.turn()==='w'?1:0]=1;
- if(game==='memory'){message=state.ended!==null?t('완료!'):t('카드 짝 맞추기')}
+ if(game==='memory'&&!online){message=state.ended!==null?t('완료!'):t('카드 짝 맞추기')}
  else if(game==='chess')message=chess.isCheckmate()?t('체크메이트')+' · '+t('{name} 승리!',{name:who[chess.turn()==='w'?1:0]}):chess.isStalemate()?t('스테일메이트'):chess.isDraw()?t('무승부'):t('{name} 차례',{name:who[turn]})+(chess.inCheck()?' · '+t('체크'):'');
  else if(turn<0)message=state.message==='탑이 무너졌어요!'?t(state.message):state.winner===null?t('무승부'):t('{name} 승리!',{name:who[state.winner]});
  else message=t('{name} 차례',{name:who[turn]});
  setStatus(message);
- $('board-score').textContent=game==='memory'?'':who.map((n,i)=>n+' · '+t('점수')+' '+(state.scores?.[i]||0)).join(' / ');
+ $('board-score').textContent=game==='memory'&&!online?'':who.map((n,i)=>n+' · '+t('점수')+' '+(state.scores?.[i]||0)).join(' / ');
  const active=turn>=0&&(mode!=='ai'||turn===0)&&(!online||turn===seat);
  if(hiddenHand){table.append(node('p',t('기기를 다음 플레이어에게 넘겨주세요.')),button(t('준비됐어요'),()=>{hiddenHand=false;render()},false,'game-button primary'));return}
  if(game==='rummikub')renderRummy(table,boardState(),active);
@@ -149,21 +164,49 @@ function renderDomino(table,active){
 function bestKey(){return 'lounge-memory-best-v1:'+state.level}
 function readBest(){try{const n=Number(localStorage.getItem(bestKey()));return n>0?n:null}catch{return null}}
 function renderMemory(table){
- const stats=node('p');stats.id='memory-stats';table.append(stats);const board=node('div',undefined,'memory-board');board.style.setProperty('--columns',state.cards.length===12?4:state.cards.length===20?5:6);
- state.cards.forEach((value,i)=>{const open=state.open.includes(i)||state.matched.includes(i);const b=button(open?faces[value]:'✦',()=>{
-  if(!LoungeRules.memoryFlip(state,i,performance.now()))return;
-  if(state.ended!==null){const elapsed=Math.max(1,Math.round(state.ended-state.started));const best=readBest();if(!best||elapsed<best){try{localStorage.setItem(bestKey(),String(elapsed))}catch{}state.newBest=true}}
-  if(state.locked){const current=generation;clearTimeout(closeTimer);closeTimer=setTimeout(()=>{if(current!==generation)return;LoungeRules.memoryClose(state);render()},850)}render();
- },state.locked||state.matched.includes(i)||state.open.includes(i)||state.ended!==null,'memory-card'+(open?' revealed':'')+(state.matched.includes(i)?' matched':''));b.dataset.card=i;b.setAttribute('aria-label',open?faces[value]:t('카드 뒤집기')+' '+(i+1));board.append(b)});table.append(board);updateClock();
+ const stats=node('p');stats.id='memory-stats';table.append(stats);
+ const board=node('div',undefined,'memory-board');
+ const expert=state.level==='expert';
+ board.style.setProperty('--columns',expert?8:state.cards.length===12?4:state.cards.length===20?5:6);
+ if(expert)board.classList.add('memory-expert');
+ const korean=document.documentElement.lang==='ko';
+ state.cards.forEach((value,i)=>{
+  const matched=state.matched.includes(i), open=matched||state.open.includes(i);
+  const [ko,en,color]=memoryCharacters[value]||[];
+  const name=korean?ko:en;
+  const b=button(undefined,()=>{
+   if(online){onlineMove({action:'flip',index:i});return}
+   if(!LoungeRules.memoryFlip(state,i,performance.now()))return;
+   if(state.ended!==null){const elapsed=Math.max(1,Math.round(state.ended-state.started));const best=readBest();if(!best||elapsed<best){try{localStorage.setItem(bestKey(),String(elapsed))}catch{}state.newBest=true}}
+   if(state.locked){const current=generation;clearTimeout(closeTimer);closeTimer=setTimeout(()=>{if(current!==generation)return;LoungeRules.memoryClose(state);render()},expert?480:850)}
+   render();
+  },(online&&state.turn!==seat)||state.locked||open||state.ended!==null,'memory-card'+(open?' revealed':'')+(matched?' matched':''));
+  b.dataset.card=i;
+  b.setAttribute('aria-label',open?name:t('카드 뒤집기')+' '+(i+1));
+  if(open){
+   const portrait=node('span',undefined,'memory-portrait');
+   portrait.setAttribute('aria-hidden','true');
+   portrait.style.backgroundPosition=(value%6)*20+'% '+Math.floor(value/6)*100/3+'%';
+   b.style.setProperty('--character-color',color);
+   b.append(portrait,node('span',name,'memory-name'));
+  }else{
+   const logo=node('img',undefined,'memory-back');
+   logo.alt='';
+   logo.src=root.querySelector('.game-brand img').src;
+   b.append(logo);
+  }
+  board.append(b);
+ });
+ table.append(board);updateClock();
 }
-function updateClock(){if(game!=='memory'||!state)return;const elapsed=state.started===null?0:(state.ended??performance.now())-state.started,best=readBest();const stats=$('memory-stats');if(stats)stats.textContent=t('시간')+' '+(elapsed/1000).toFixed(1)+' s · '+t('시도')+' '+state.attempts+' · '+t('짝')+' '+state.matched.length/2+'/'+state.cards.length/2+' · '+t('최고 기록')+' '+(best?(best/1000).toFixed(1)+' s':'—')+(state.newBest?' · '+t('새 기록!'):'')}
-async function request(action,data={}){const r=await fetch('https://royal-room-nov12-e295.mutedwand2.chatgpt.site/api/board/'+action,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({game,token:online.token,...data}),signal:AbortSignal.timeout(12000)});if(!r.ok)throw Error('network');return r.json()}
+function updateClock(){if(game!=='memory'||!state)return;if(online){const stats=$('memory-stats');if(stats)stats.textContent=t('플레이어 {n}',{n:seat+1})+' · '+state.matched.length/2+'/'+state.cards.length/2;return;}const elapsed=state.started===null?0:(state.ended??performance.now())-state.started,best=readBest();const stats=$('memory-stats');if(stats)stats.textContent=t('시간')+' '+(elapsed/1000).toFixed(1)+' s · '+t('시도')+' '+state.attempts+' · '+t('짝')+' '+state.matched.length/2+'/'+state.cards.length/2+' · '+t('최고 기록')+' '+(best?(best/1000).toFixed(1)+' s':'—')+(state.newBest?' · '+t('새 기록!'):'')}
+async function request(action,data={}){const r=await fetch('https://royal-room-nov12-e295.mutedwand2.chatgpt.site/api/board/'+action,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({game:online.game,token:online.token,...data}),signal:AbortSignal.timeout(12000)});if(!r.ok)throw Error('network');return r.json()}
 function showOnline(v){if(!online||v.version<online.version)return;const changed=v.version!==online.version;online.version=v.version;state=v.state;seat=v.seat;hand=v.hand||[];if(changed){draft=structuredClone(state.sets||[]);selected.clear()}
  $('board-lobby').hidden=true;$('board-play').hidden=false;
- if(v.waiting){setStatus(t('친구를 기다리는 중'));$('board-table').replaceChildren();$('board-invite').hidden=!v.room;if(v.room){const url=new URL('/'+game+'/', 'https://webtronics.run.place');url.searchParams.set('room',v.room);url.searchParams.set('lang',window.LoungeI18n.language);$('board-invite-url').href=url.href;$('board-invite-url').textContent=url.href;drawInviteQR($('board-qr'),url.href)}return}
+ if(v.waiting){setStatus(t('친구를 기다리는 중'));$('board-table').replaceChildren();$('board-invite').hidden=!v.room;if(v.room){const url=new URL('/'+game+'/',location.origin);url.searchParams.set('room',v.room);if(game==='memory')url.searchParams.set('level',state.level);url.searchParams.set('lang',window.LoungeI18n.language);$('board-invite-url').href=url.href;$('board-invite-url').textContent=url.href;drawInviteQR($('board-qr'),url.href)}return}
  $('board-invite').hidden=true;render();
 }
-async function startOnline(action,room){clearTimers();await stopOnline();generation++;mode='online';hiddenHand=false;setStatus(t('연결 중'));online={token:crypto.randomUUID(),version:-1};try{showOnline(await request(action,{room,name:t('플레이어 {n}',{n:1})}));pollTimer=setInterval(async()=>{if(busy||!online)return;try{showOnline(await request('state'))}catch{setStatus(t('연결에 실패했습니다. 다시 시도하세요.'))}},1200)}catch{online=null;setStatus(t('연결에 실패했습니다. 다시 시도하세요.'))}}
+async function startOnline(action,room){clearTimers();await stopOnline();generation++;mode='online';hiddenHand=false;setStatus(t('연결 중'));online={token:crypto.randomUUID(),version:-1,game:game==='memory'?'memory-'+$('play-level').value:game};try{showOnline(await request(action,{room,name:t('플레이어 {n}',{n:1})}));pollTimer=setInterval(async()=>{if(busy||!online)return;try{showOnline(await request('state'))}catch{setStatus(t('연결에 실패했습니다. 다시 시도하세요.'))}},1200)}catch{online=null;setStatus(t('연결에 실패했습니다. 다시 시도하세요.'))}}
 async function onlineMove(data){if(busy||!online)return;busy=true;try{showOnline(await request('move',{...data,version:online.version}))}catch{setStatus(t('규칙에 맞지 않는 동작입니다.'));try{showOnline(await request('state'))}catch{setStatus(t('연결에 실패했습니다. 다시 시도하세요.'))}}finally{busy=false}}
 $('board-copy').onclick=async()=>{try{await navigator.clipboard.writeText($('board-invite-url').href);setStatus(t('복사했어요'))}catch{setStatus($('board-invite-url').href)}};
 $('board-back').onclick=()=>{generation++;clearTimers();stopOnline();state=null;lobby()};

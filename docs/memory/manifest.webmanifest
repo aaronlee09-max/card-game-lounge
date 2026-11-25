@@ -6,7 +6,7 @@
   "scope": "/memory/",
   "display": "standalone",
   "background_color": "#11172e",
-  "theme_color": "#467baa",
+  "theme_color": "#6346a2",
   "icons": [
     {
       "src": "icon-192.png",

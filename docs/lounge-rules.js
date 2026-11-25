@@ -40,7 +40,7 @@ function dominoMove(s,seat,b){if(s.turn<0||seat!==s.turn)return false;const hand
  }else if(b.action==='pass'){
  if(dominoOptions(s).length||s.stock.length)return false;s.passes++;if(s.passes>=s.hands.length){const totals=s.hands.map(h=>h.reduce((a,id)=>a+s.tiles[id].a+s.tiles[id].b,0)),min=Math.min(...totals);dominoFinish(s,totals.filter(n=>n===min).length===1?totals.indexOf(min):null);return true}
  }else return false;s.turn=(seat+1)%s.hands.length;return true}
-function memory(level='easy'){const count={easy:6,normal:10,hard:15}[level]||6;return {level,cards:shuffle(Array.from({length:count*2},(_,i)=>i%count)),matched:[],open:[],attempts:0,started:null,ended:null,locked:false}}
+function memory(level='easy'){const count={easy:6,normal:10,hard:15,expert:24}[level]||6;return {level,cards:shuffle(Array.from({length:count*2},(_,i)=>i%count)),matched:[],open:[],attempts:0,started:null,ended:null,locked:false}}
 function memoryFlip(s,i,now){if(s.ended!==null||s.locked||!Number.isInteger(i)||i<0||i>=s.cards.length||s.open.includes(i)||s.matched.includes(i))return false;if(s.started===null)s.started=now;s.open.push(i);if(s.open.length===2){s.attempts++;if(s.cards[s.open[0]]===s.cards[s.open[1]]){s.matched.push(...s.open);s.open=[];if(s.matched.length===s.cards.length)s.ended=now}else s.locked=true}return true}
 function memoryClose(s){s.open=[];s.locked=false}
 function chessBot(chess,depth=2){
